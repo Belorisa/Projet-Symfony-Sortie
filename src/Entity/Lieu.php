@@ -27,17 +27,15 @@ class Lieu
     #[ORM\Column(nullable: true)]
     private ?float $longitude = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $nomVille = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $codePostal = null;
-
     /**
      * @var Collection<int, Sortie>
      */
     #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'lieu', orphanRemoval: true)]
     private Collection $ListeSorties;
+
+    #[ORM\ManyToOne(inversedBy: 'lieu')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Ville $ville = null;
 
     public function __construct()
     {
@@ -97,29 +95,8 @@ class Lieu
         return $this;
     }
 
-    public function getNomVille(): ?string
-    {
-        return $this->nomVille;
-    }
 
-    public function setNomVille(string $nomVille): static
-    {
-        $this->nomVille = $nomVille;
 
-        return $this;
-    }
-
-    public function getCodePostal(): ?string
-    {
-        return $this->codePostal;
-    }
-
-    public function setCodePostal(string $codePostal): static
-    {
-        $this->codePostal = $codePostal;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Sortie>
@@ -147,6 +124,18 @@ class Lieu
                 $listeSorty->setLieu(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getVille(): ?Ville
+    {
+        return $this->ville;
+    }
+
+    public function setVille(?Ville $ville): static
+    {
+        $this->ville = $ville;
 
         return $this;
     }
