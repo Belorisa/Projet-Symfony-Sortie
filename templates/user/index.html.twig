@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello UserController!{% endblock %}
+{% block title %}Profil{% endblock %}
 
 {% block body %}
 
@@ -11,6 +11,12 @@
        {{ form(user_form) }}
 
     </div>
+    {% if isModified == true %}
+        <button type="submit" class="btn"> Enregistrer </button>
+    {% endif %}
 
+    {% if isModified == false %}
+        <button type="submit" class="btn">Modifier</button>
+    {% endif %}
 
 {% endblock %}
