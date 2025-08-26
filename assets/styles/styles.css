@@ -15,6 +15,9 @@ body {
 
 h1  {
     text-align: center;
+    text-shadow: 2px 2px #000;
+    text-transform: uppercase;
+    animation: glitch 3s infinite;
 }
 
 /*header img.title {*/
@@ -31,9 +34,9 @@ header img.title {
 }
 
 /* Sur petit écran on autorise plus de hauteur */
-@media (max-width: 2500px) {
+@media (max-width: 2000px) {
     header img.title {
-        max-height: 500px;
+        max-height: 900px;
     }
 }
 
@@ -71,7 +74,8 @@ nav ul {
     margin: 0;
     padding: 0;
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
+
     gap: 2rem;
 }
 
@@ -83,4 +87,84 @@ nav ul li a {
 
 nav ul li a:hover {
     text-decoration: underline;
+}
+
+/* Conteneur du formulaire */
+form {
+    max-width: 400px;          /* largeur limitée */
+    margin: 0 auto;            /* centrage horizontal */
+    padding: 2rem;             /* respiration */
+    background: rgba(255, 255, 255, 0.1); /* léger fond translucide */
+    border-radius: 10px;       /* coins arrondis */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+/* Chaque ligne du formulaire */
+form div {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column; /* label au-dessus de l’input */
+}
+
+/* Labels */
+form label {
+    margin-bottom: 0.3rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+/* Champs */
+form input,
+form textarea,
+form select {
+    padding: 0.5rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+/* Bouton */
+form button {
+    margin-top: 1rem;
+    padding: 0.7rem;
+    width: 100%;
+    background: #d96b10;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+form button:hover {
+    background: #a94f07;
+}
+
+/* Animations */
+
+@keyframes flicker {
+    0%, 100% { opacity: 1; }
+    40% { opacity: 0.9; }
+    45% { opacity: 0.4; }
+    50% { opacity: 0.7; }
+    55% { opacity: 0.3; }
+    60% { opacity: 0.9; }
+    70% { opacity: 1; }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translate(0); }
+    25% { transform: translate(-1px, 1px); }
+    50% { transform: translate(2px, -1px); }
+    75% { transform: translate(-2px, 2px); }
+}
+
+@keyframes glitch {
+    0% { transform: none; }
+    20% { transform: skew(0.5deg, 0.5deg); }
+    40% { transform: translate(-2px, 2px) skew(-0.5deg, -0.5deg); }
+    60% { transform: translate(2px, -2px); }
+    80% { transform: none; }
+    100% { transform: translate(-1px, 1px); }
 }
