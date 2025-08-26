@@ -29,35 +29,35 @@ class Sortie
     private ?\DateTime $dateLimiteInscription = null;
 
     #[ORM\Column]
-    private ?int $nbInscriptionsMax = null;
+    private ?int $nbInscriptionMax = null;
 
-    #[ORM\Column(type: Types::TEXT,length: 255, nullable: true)]
-    private ?string $infosSortie = null;
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $infoSortie = null;
 
     #[ORM\Column(length: 255)]
     private ?string $etat = null;
 
     /**
-     * @var Collection<int, Participant>
+     * @var Collection<int, User>
      */
-    #[ORM\ManyToMany(targetEntity: Participant::class, mappedBy: 'sortie')]
-    private Collection $participants;
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'sortie')]
+    private Collection $users;
 
-    #[ORM\ManyToOne(inversedBy: 'sortiesOrganises')]
+    #[ORM\ManyToOne(inversedBy: 'organisateur')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Participant $organisateur = null;
+    private ?User $organisateur = null;
 
-    #[ORM\ManyToOne(inversedBy: 'listeSorties')]
+    #[ORM\ManyToOne(inversedBy: 'sortie')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Campus $campus = null;
+    private ?Site $site = null;
 
-    #[ORM\ManyToOne(inversedBy: 'ListeSorties')]
+    #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Lieu $lieu = null;
 
     public function __construct()
     {
-        $this->participants = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -113,26 +113,26 @@ class Sortie
         return $this;
     }
 
-    public function getNbInscriptionsMax(): ?int
+    public function getNbInscriptionMax(): ?int
     {
-        return $this->nbInscriptionsMax;
+        return $this->nbInscriptionMax;
     }
 
-    public function setNbInscriptionsMax(int $nbInscriptionsMax): static
+    public function setNbInscriptionMax(int $nbInscriptionMax): static
     {
-        $this->nbInscriptionsMax = $nbInscriptionsMax;
+        $this->nbInscriptionMax = $nbInscriptionMax;
 
         return $this;
     }
 
-    public function getInfosSortie(): ?string
+    public function getInfoSortie(): ?string
     {
-        return $this->infosSortie;
+        return $this->infoSortie;
     }
 
-    public function setInfosSortie(?string $infosSortie): static
+    public function setInfoSortie(?string $infoSortie): static
     {
-        $this->infosSortie = $infosSortie;
+        $this->infoSortie = $infoSortie;
 
         return $this;
     }
@@ -150,52 +150,52 @@ class Sortie
     }
 
     /**
-     * @return Collection<int, Participant>
+     * @return Collection<int, User>
      */
-    public function getParticipants(): Collection
+    public function getUsers(): Collection
     {
-        return $this->participants;
+        return $this->users;
     }
 
-    public function addParticipant(Participant $participant): static
+    public function addUser(User $user): static
     {
-        if (!$this->participants->contains($participant)) {
-            $this->participants->add($participant);
-            $participant->addSortie($this);
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addSortie($this);
         }
 
         return $this;
     }
 
-    public function removeParticipant(Participant $participant): static
+    public function removeUser(User $user): static
     {
-        if ($this->participants->removeElement($participant)) {
-            $participant->removeSortie($this);
+        if ($this->users->removeElement($user)) {
+            $user->removeSortie($this);
         }
 
         return $this;
     }
 
-    public function getOrganisateur(): ?Participant
+    public function getOrganisateur(): ?User
     {
         return $this->organisateur;
     }
 
-    public function setOrganisateur(?Participant $organisateur): static
+    public function setOrganisateur(?User $organisateur): static
     {
         $this->organisateur = $organisateur;
 
         return $this;
     }
 
-    public function getCampus(): ?Campus
+    public function getSite(): ?Site
     {
-        return $this->campus;
+        return $this->site;
     }
 
-    public function setCampus(?Campus $campus): static
+    public function setSite(?Site $site): static
     {
-        $this->campus = $campus;
+        $this->site = $site;
 
         return $this;
     }

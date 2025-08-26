@@ -16,7 +16,7 @@ class Lieu
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $nomLieu = null;
+    private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
     private ?string $rue = null;
@@ -31,15 +31,15 @@ class Lieu
      * @var Collection<int, Sortie>
      */
     #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'lieu', orphanRemoval: true)]
-    private Collection $ListeSorties;
+    private Collection $sorties;
 
-    #[ORM\ManyToOne(inversedBy: 'lieu')]
+    #[ORM\ManyToOne(inversedBy: 'lieus')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Ville $ville = null;
 
     public function __construct()
     {
-        $this->ListeSorties = new ArrayCollection();
+        $this->sorties = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -47,14 +47,14 @@ class Lieu
         return $this->id;
     }
 
-    public function getNomLieu(): ?string
+    public function getNom(): ?string
     {
-        return $this->nomLieu;
+        return $this->nom;
     }
 
-    public function setNomLieu(string $nomLieu): static
+    public function setNom(string $nom): static
     {
-        $this->nomLieu = $nomLieu;
+        $this->nom = $nom;
 
         return $this;
     }
@@ -95,33 +95,30 @@ class Lieu
         return $this;
     }
 
-
-
-
     /**
      * @return Collection<int, Sortie>
      */
-    public function getListeSorties(): Collection
+    public function getSorties(): Collection
     {
-        return $this->ListeSorties;
+        return $this->sorties;
     }
 
-    public function addListeSorty(Sortie $listeSorty): static
+    public function addSorty(Sortie $sorty): static
     {
-        if (!$this->ListeSorties->contains($listeSorty)) {
-            $this->ListeSorties->add($listeSorty);
-            $listeSorty->setLieu($this);
+        if (!$this->sorties->contains($sorty)) {
+            $this->sorties->add($sorty);
+            $sorty->setLieu($this);
         }
 
         return $this;
     }
 
-    public function removeListeSorty(Sortie $listeSorty): static
+    public function removeSorty(Sortie $sorty): static
     {
-        if ($this->ListeSorties->removeElement($listeSorty)) {
+        if ($this->sorties->removeElement($sorty)) {
             // set the owning side to null (unless already changed)
-            if ($listeSorty->getLieu() === $this) {
-                $listeSorty->setLieu(null);
+            if ($sorty->getLieu() === $this) {
+                $sorty->setLieu(null);
             }
         }
 
