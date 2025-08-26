@@ -12,11 +12,11 @@
     {%  for sortie in sorties %}
     <article class="card">
         <h4>{{ sortie.nom }}</h4>
-        <span>Site : {{ sortie.site }}</span>
-        <span>Date : {{ sortie.dateHeureDebut|date('d/m/Y') }}</span>
+        <span>Site : {{ sortie.site.nom }}</span>
+        <span>Date : {{ sortie.dateHeureDebut|date('Y/m/d') }}</span>
         <span>Nombre de places maximum : {{ sortie.nbInscriptionMax }} </span>
-        <a href="{{ path('sortie_detail', {id : sortie.id }) }}">
-        </a>
+        {# <a href="{{ path('sortie_detail', {id : sortie.id }) }}">
+        </a> #}
 
     </article>
     {% endfor %}
