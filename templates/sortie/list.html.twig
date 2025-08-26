@@ -1,20 +1,30 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello SortieController!{% endblock %}
+{% block title %}{{ parent() }} - Liste{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+<h2>Evènements</h2>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <!--gestion des pages si plus de 10 évènements-->
+    <h3> Liste des évènements publiés : </h3>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>D:/ProjetSymfony7.3/projetSymfonySortie/src/Controller/SortieController.php</code></li>
-        <li>Your template at <code>D:/ProjetSymfony7.3/projetSymfonySortie/templates/sortie/index.html.twig</code></li>
-    </ul>
-</div>
+<section class="sortie-list">
+    {%  for sortie in sorties %}
+    <article class="card">
+        <h4>{{ sortie.nom }}</h4>
+        <span>Site : {{ sortie.site }}</span>
+        <span>Date : {{ sortie.dateHeureDebut|date('d/m/Y') }}</span>
+        <span>Nombre de places maximum : {{ sortie.nbInscriptionMax }} </span>
+        <a href="{{ path('sortie_detail', {id : sortie.id }) }}">
+        </a>
+
+    </article>
+    {% endfor %}
+
+</section>
+
+
+
 {% endblock %}
+
+

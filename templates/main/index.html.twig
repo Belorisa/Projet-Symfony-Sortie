@@ -3,8 +3,23 @@
 {% block title %}Accueil{% endblock %}
 
 {% block body %}
+    <header>
+        <nav>
+            <div>
+                <h1><strong>Accueil</strong></h1>
+            </div>
+            <br>
+            <a href="{{ path('app_user', { id : app.user.id }) }}">Profil Utilisateur</a>
+            <br>
+            <a href="">Sorties Organisées</a>
+
+        </nav>
+    </header>
 
 
+    <!-- affichage des évènements les plus populaires : les 3 ayant le plus gd nb de participants-->
+    <h2>Evènements les plus populaires</h2>
+    <!-- boucle for sur la liste des sorties et tri par nb de participants -->
 
 
 {% endblock %}

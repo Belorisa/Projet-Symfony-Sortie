@@ -2,8 +2,9 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+        <title>{% block title %}Sortie{% endblock %}</title>
+        {# <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>"> #}
+        <link rel="icon" href="{{ asset('images/favicon.png') }}">
         {% block stylesheets %}
         {% endblock %}
 
@@ -12,26 +13,35 @@
         {% endblock %}
     </head>
     <body>
-
         <header>
-            <nav>
-                <div>
-                    <h1><strong>Accueil</strong></h1>
-                </div>
-                <br>
-                <a href="{{ path('app_user', { id : app.user.id }) }}">Profil Utilisateur</a>
-                <br>
-                <a href="">Sorties Organisées</a>
+            <h1>
+                <img class="title" src="{{ asset('images/logo.png') }}" alt="logo Sortie">
+            </h1>
 
+            <nav>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="{{ path('main') }}">Accueil</a></li>
+                    {#  {% if is_granted('IS_AUTHENTIFICATED') %} #}
+
+                    <li><a href="{{ path('sortie_list') }}">Evènements</a></li>
+                    {#  {% endif %} #}
+                    {# {% if is_granted('ROLE_ADMIN') %} #}
+                    <li><a href="#">Créer un évènement</a></li>
+                    {# <li><a href="{{ path('sortie_create') }}">Créer un évènement</a></li> #}
+                    {# {% endif %} #}
+                    {#  {% if !is_granted('IS_AUTHENTIFICATED') %} #}
+                    {# <li><a href="{{ path('app_login') }}">Se connecter</a></li> #}
+                    {# {% else %} #}
+                    {# <li><a href="{{ path('app_logout') }}">Déconnexion</a></li> #}
+                    {# {% endif %} #}
+                </ul>
             </nav>
         </header>
-
-
-
-
-        {% block body %}
-        {% endblock %}
-
-
+        <main>
+            {% block body %} {% endblock %}
+        </main>
+        <footer class="text-center">
+            <p>©Sortir-com {{ "now" | date("Y") }}</p>
+        </footer>
     </body>
 </html>
