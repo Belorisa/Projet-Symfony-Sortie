@@ -1,12 +1,20 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ parent() }} - Accueil{% endblock %}
+{% block title %}Accueil{% endblock %}
 
 {% block body %}
+    <header>
+        <nav>
+            <div>
+                <h1><strong>Accueil</strong></h1>
+            </div>
+            <br>
+            <a href="{{ path('app_user', { id : app.user.id }) }}">Profil Utilisateur</a>
+            <br>
+            <a href="">Sorties Organisées</a>
 
-    <!-- affichage des évènements du moment : les 3 plus proches en date -->
-    <h2> Evènements du moment</h2>
-    <!-- boucle for sur la liste des sorties et tri par date de la plus récente à la plus ancienne-->
+        </nav>
+    </header>
 
 
     <!-- affichage des évènements les plus populaires : les 3 ayant le plus gd nb de participants-->
