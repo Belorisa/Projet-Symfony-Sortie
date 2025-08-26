@@ -25,11 +25,11 @@ class Ville
      * @var Collection<int, Lieu>
      */
     #[ORM\OneToMany(targetEntity: Lieu::class, mappedBy: 'ville', orphanRemoval: true)]
-    private Collection $lieu;
+    private Collection $lieus;
 
     public function __construct()
     {
-        $this->lieu = new ArrayCollection();
+        $this->lieus = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -64,15 +64,15 @@ class Ville
     /**
      * @return Collection<int, Lieu>
      */
-    public function getLieu(): Collection
+    public function getLieus(): Collection
     {
-        return $this->lieu;
+        return $this->lieus;
     }
 
     public function addLieu(Lieu $lieu): static
     {
-        if (!$this->lieu->contains($lieu)) {
-            $this->lieu->add($lieu);
+        if (!$this->lieus->contains($lieu)) {
+            $this->lieus->add($lieu);
             $lieu->setVille($this);
         }
 
@@ -81,7 +81,7 @@ class Ville
 
     public function removeLieu(Lieu $lieu): static
     {
-        if ($this->lieu->removeElement($lieu)) {
+        if ($this->lieus->removeElement($lieu)) {
             // set the owning side to null (unless already changed)
             if ($lieu->getVille() === $this) {
                 $lieu->setVille(null);
