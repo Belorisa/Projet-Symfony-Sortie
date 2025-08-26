@@ -12,11 +12,18 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class UserController extends AbstractController
 {
-    #[Route('/user', name: 'app_user')]
-    public function index(): Response
+    #[Route('/user/{id}', name: 'app_user')]
+    public function index(User $user, Request $request): Response
     {
+        $form = $this->createForm(UserType::class, $user);
+
+        $form->handleRequest($request);
+
+        $isModified = false;
+
         return $this->render('user/index.html.twig', [
-            'controller_name' => 'UserController',
+            'user_form' => $form,
+            'isModified' => $isModified,
         ]);
     }
 
@@ -32,8 +39,15 @@ final class UserController extends AbstractController
             return $this->redirectToRoute('app_user_update');
         }
 
+
+        $isModified = true;
+
+
         return $this->render('user/index.html.twig', [
-           'user_form' => $form
+           'user_form' => $form,
+            'isModified' => $isModified,
+
+
         ]);
 
     }
