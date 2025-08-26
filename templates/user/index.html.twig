@@ -2,13 +2,16 @@
 
 {% block title %}Profil{% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="../../assets/css/style.css">
+{% endblock %}
+
 {% block body %}
 
     <h1>Profil</h1>
 
 <div class = "row justify-content-center">
     <div class = "col-6">
-       {{ form(user_form) }}
 
 
        {{ form_start(user_form) }}
@@ -26,7 +29,7 @@
         {% endif %}
 
         {% if isModified == false %}
-            <button class="btn"><a href={{ path('app_user_update',{id: app.user.id}) }}>Modifier </a></button>
+            <button type="button" class="btn"> <a href="{{ path('app_user_update',{id: app.user.id}) }}"> Modifier </a> </button>
         {% endif %}
         {{ form_end(user_form,{render_rest: false}) }}
 
