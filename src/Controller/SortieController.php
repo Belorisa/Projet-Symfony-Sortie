@@ -9,7 +9,12 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class SortieController extends AbstractController
 {
-    #[Route('/', name: '_list')]
+    #[Route('/list/{page}',
+        name: '_list',
+        requirements: ['page' => '\d+'],
+        defaults: ['page' => 1],
+        methods: ['GET']
+)]
     public function list(): Response
     {
         return $this->render('sortie/list.html.twig', [
