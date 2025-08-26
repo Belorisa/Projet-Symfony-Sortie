@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Sortie;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,14 +20,19 @@ class SortieRepository extends ServiceEntityRepository
 
 
 
-    public function findAllSortie():array {
-        return $this->createQueryBuilder('s');
+    public function findAllSorties(int $nPerPage, int $offset): Paginator {
+        $qB = $this->createQueryBuilder('s')
+            ->orderBy('s.dateHeureDebut', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($nPerPage)
+            ->getQuery();
 
+            return new Paginator($qB);
     }
 
 
     //fonction pour récupérer les 3 sorties du moment page accueil
-    public function findSeriesByDate(Datetime $date): array {
+    public function findSortiesByDate(Datetime $date): array {
         return $this->createQueryBuilder('s')
             ->orderBy('s.dateHeureDebut', 'DESC')
             ->setFirstResult(0)
