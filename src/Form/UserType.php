@@ -24,17 +24,13 @@ class UserType extends AbstractType
             ->add('telephone')
             ->add('password', PasswordType::class, [
                 'label' => 'Mot de passe',
-                'required' => false,
-            ])
-            ->add('sortie', EntityType::class, [
-                'class' => Sortie::class,
-                'choice_label' => 'nom',
-                'multiple' => true,
-            ])
+                'always_empty' => true,
+                ])
             ->add('campus', EntityType::class, [
                 'class' => Site::class,
                 'choice_label' => 'nom',
             ])
+
         ;
     }
 

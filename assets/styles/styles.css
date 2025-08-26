@@ -1,6 +1,86 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: radial-gradient(circle at center, #d96b10, #763e09);
+    color: #ffffff;
+    font-family: 'Share Tech Mono', monospace;
+    overflow-x: hidden;
+}
+
 body {
-    background: linear-gradient(180deg, #000000, #132135);
-    background-position: center;
-    background-attachment: fixed;
-    background-size: cover;
+    display: flex;
+    flex-direction: column;
+}
+
+h1  {
+    text-align: center;
+}
+
+/*header img.title {*/
+/*    width: 100%;*/
+/*    height: auto; !* garde le ratio *!*/
+/*    display: block; !* enlève l’espace blanc en dessous *!*/
+/*}*/
+
+header img.title {
+    width: 100%;
+    height: auto;
+    max-height: 200px; /* limite la hauteur sur grand écran */
+    object-fit: cover; /* garde le ratio, recadre si nécessaire */
+}
+
+/* Sur petit écran on autorise plus de hauteur */
+@media (max-width: 2500px) {
+    header img.title {
+        max-height: 500px;
+    }
+}
+
+/* Footer - data neon */
+footer {
+    text-align: center;
+    padding: 1em;
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 0.9rem;
+    border-top: 2px solid #000000;
+    box-shadow: 0 -2px 10px #000000;
+    font-style: italic;
+    letter-spacing: 1px;
+}
+
+/* Main - ambiance laboratoire secret */
+main {
+    flex: 1;
+    padding: 2rem;
+
+    );
+}
+
+/*---------------------------------------------------------------------------------------*/
+
+
+
+nav {
+    background-color: #763e09; /* Couleur de fond */
+    padding: 1rem;
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
 }

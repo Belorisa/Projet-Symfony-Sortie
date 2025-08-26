@@ -6,17 +6,34 @@
 
     <h1>Profil</h1>
 
-    <div>
-
+<div class = "row justify-content-center">
+    <div class = "col-6">
        {{ form(user_form) }}
 
-    </div>
-    {% if isModified == true %}
-        <button type="submit" class="btn"> Enregistrer </button>
-    {% endif %}
 
-    {% if isModified == false %}
-        <button type="submit" class="btn">Modifier</button>
-    {% endif %}
+       {{ form_start(user_form) }}
+        {{ form_row(user_form.pseudo) }}
+        {{ form_row(user_form.nom) }}
+        {{ form_row(user_form.prenom) }}
+        {{ form_row(user_form.email) }}
+        {{ form_row(user_form.telephone) }}
+        {{ form_row(user_form.campus) }}
+        {% if isModified == true %}
+        {{ form_row(user_form.plainPassword) }}
+        {% endif %}
+        {% if isModified == true %}
+            <button type="submit" class="btn"> Enregistrer </button>
+        {% endif %}
+
+        {% if isModified == false %}
+            <button class="btn"><a href={{ path('app_user_update',{id: app.user.id}) }}>Modifier </a></button>
+        {% endif %}
+        {{ form_end(user_form,{render_rest: false}) }}
+
+    </div>
+</div>
+
+
+
 
 {% endblock %}

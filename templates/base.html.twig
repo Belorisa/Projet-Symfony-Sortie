@@ -14,9 +14,9 @@
     </head>
     <body>
         <header>
-            <h1>
-                <img class="title" src="{{ asset('images/logo.png') }}" alt="logo Sortie">
-            </h1>
+
+            <img class="title" src="{{ asset('images/logo_projet_php.png') }}" alt="logo Sortie">
+
 
             <nav>
                 <ul class="nav-links" id="navLinks">
@@ -38,10 +38,14 @@
             </nav>
         </header>
         <main>
-            {% block body %} {% endblock %}
+            {% block body %}
+
+            {% endblock %}
         </main>
         <footer class="text-center">
+            {% block footer %}
             <p>©Sortir-com {{ "now" | date("Y") }}</p>
+            {% endblock %}
         </footer>
     </body>
 </html>
