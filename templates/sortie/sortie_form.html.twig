@@ -1,15 +1,27 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello UserController!{% endblock %}
+{% block title %}Création d'évènement{% endblock %}
 
 {% block body %}
     <br>
     <h1>Création d'évènement</h1>
-
     <br>
-    <div>
-        {{ form(sortie_form) }}
+
+    {{ form_start(sortie_form) }}
+
+    {{ form_row(sortie_form.nom) }}
+    {{ form_row(sortie_form.dateHeureDebut) }}
+    {{ form_row(sortie_form.duree) }}
+    {{ form_row(sortie_form.dateLimiteInscription) }}
+    {{ form_row(sortie_form.nbInscriptionMax) }}
+    {{ form_row(sortie_form.infoSortie) }}
+    {{ form_row(sortie_form.site) }}
+    {{ form_row(sortie_form.lieu) }}
+
+    <div class="btn-position">
+        {{ form_row(sortie_form.submit) }}
     </div>
 
+    {{ form_end(sortie_form) }}
 
 {% endblock %}
