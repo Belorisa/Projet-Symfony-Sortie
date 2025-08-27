@@ -92,7 +92,7 @@ final class SortieController extends AbstractController
 
 
         $user = $this->getUser();
-        if($sortie->getEtat()=="ouverte" && $sortie->getDateLimiteInscription()>new \DateTime())
+        if($sortie->getEtat()=="OUVERTE" && $sortie->getDateLimiteInscription()>new \DateTime())
         {
             $sortie->addUser($user);
             $em->persist($sortie);
@@ -113,7 +113,7 @@ final class SortieController extends AbstractController
 
 
         $user = $this->getUser();
-        if($sortie->getEtat()!="enCours" && $sortie->getDateLimiteInscription()>new \DateTime())
+        if($sortie->getEtat()!="EN COURS" && $sortie->getDateLimiteInscription()>new \DateTime())
         {
             $sortie->removeUser($user);
             $em->persist($sortie);

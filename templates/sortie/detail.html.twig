@@ -4,46 +4,13 @@
 {% block title %}{{ parent() }} - Liste{% endblock %}
 
 {% block body %}
-    <style>
 
-
-        h1 {
-            text-align: center;
-        }
-
-        .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px 40px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .field {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .field label {
-            font-weight: bold;
-            margin-right: 10px;
-        }
-
-        .field span {
-            flex-grow: 1;
-
-            display: inline-block;
-            min-height: 20px;
-        }
-    </style>
 
     <h1>Afficher une sortie</h1>
 
     <div class="container">
         <div class="field"><label>Nom de la sortie:</label> <span>{{ sortie.nom }}</span></div>
-        <div class="field"><label>Ville organisatrice:</label> <span>{{ sortie.site.nom }}</span></div>
+        <div class="field"><label>Campus Organisateur:</label> <span>{{ sortie.site.nom }}</span></div>
 
         <div class="field"><label>Date et heure de la sortie:</label> <span>{{ sortie.dateHeureDebut|date('Y/m/d H:m') }}</span></div>
         <div class="field"><label>Lieu:</label> <span>{{ sortie.lieu.nom }}</span></div>
@@ -55,15 +22,18 @@
         <div class="field"><label>Code postal:</label> <span>{{ sortie.lieu.ville.codePostal }}</span></div>
 
         <div class="field"><label>Durée:</label> <span>{{ sortie.duree }}</span></div>
+        <div class="field"><label>Description et infos:</label> <span>{{ sortie.infoSortie }}</span></div>
+
+        <div class="field"><label>Longitude:</label> <span>{{ sortie.lieu.longitude }}</span></div>
         <div class="field"><label>Latitude:</label> <span>{{ sortie.lieu.latitude }}</span></div>
 
-        <div class="field"><label>Description et infos:</label> <span>{{ sortie.infoSortie }}</span></div>
-        <div class="field"><label>Longitude:</label> <span>{{ sortie.lieu.longitude }}</span></div>
     </div>
-    {% if app.user not in listUsers and sortie.dateLimiteInscription > "now" and sortie.etat == "ouverte"   %}
+
+    {% if app.user not in listUsers and sortie.dateLimiteInscription > "now" and sortie.etat == "OUVERTE"   %}
     <a href="{{ path('sortie_inscription',{id: sortie.id}) }}">S'inscrire</a>
     {% endif %}
-    {% if app.user in listUsers and sortie.etat != "enCours" %}
+
+    {% if app.user in listUsers and sortie.etat != "EN COURS" %}
     <a href="{{ path('sortie_deinscription',{id: sortie.id}) }}">Ce déinscrire</a>
     {% endif %}
 
