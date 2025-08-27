@@ -10,15 +10,15 @@
 
 <section class="sortie-list">
     {%  for sortie in sorties %}
-    <article class="card">
+    <a href="{{ path('sortie_detail', {id : sortie.id }) }}">
+        <article class="card">
         <h4>{{ sortie.nom }}</h4>
         <span>Site : {{ sortie.site.nom }}</span>
-        <span>Date : {{ sortie.dateHeureDebut|date('Y/m/d') }}</span>
+        <span>Date Début Sortie : {{ sortie.dateHeureDebut|date('Y/m/d') }}</span>
+        <span>Date Fin Inscription : {{ sortie.dateLimiteInscription|date('Y/m/d') }}</span>
         <span>Nombre de places maximum : {{ sortie.nbInscriptionMax }} </span>
-        {# <a href="{{ path('sortie_detail', {id : sortie.id }) }}">
-        </a> #}
-
-    </article>
+        </article>
+    </a>
     {% endfor %}
 
 </section>
