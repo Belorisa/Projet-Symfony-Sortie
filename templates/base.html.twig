@@ -21,21 +21,23 @@
 
             <nav>
                 <ul class="nav-links" id="navLinks">
+
                     <li><a href="{{ path('main') }}">Accueil</a></li>
-                    {% if is_granted('IS_AUTHENTIFICATED') %}
-                    <a href="{{ path('app_user', { id : app.user.id }) }}">Profil Utilisateur</a>
+                    {% if is_granted('IS_AUTHENTICATED') %}
+                    <li><a href="{{ path('app_user', { id : app.user.id }) }}">Profil Utilisateur</a></li>
                     {%  endif %}
+
                     <li><a href="{{ path('sortie_list') }}">Evènements</a></li>
-                    {#  {% endif %} #}
-                    {# {% if is_granted('ROLE_ADMIN') %} #}
-                    <li><a href="#">Créer un évènement</a></li>
-                    {# <li><a href="{{ path('sortie_create') }}">Créer un évènement</a></li> #}
-                    {# {% endif %} #}
-                    {#  {% if !is_granted('IS_AUTHENTIFICATED') %} #}
-                    {# <li><a href="{{ path('app_login') }}">Se connecter</a></li> #}
-                    {# {% else %} #}
-                    {# <li><a href="{{ path('app_logout') }}">Déconnexion</a></li> #}
-                    {# {% endif %} #}
+
+
+                     {% if (not is_granted('IS_AUTHENTICATED_FULLY')) %}
+                     <li><a href="{{ path('app_register') }}">Inscription</a></li>
+                     <li><a href="{{ path('app_login') }}">Se connecter</a></li>
+                     {% else %}
+                     <li class="create-event"><a href="{{ path('sortie_creation') }}">Créer un évènement</a></li>
+                     <li><a href="{{ path('app_logout') }}">Déconnexion</a></li>
+                     {% endif %}
+
                 </ul>
             </nav>
         </header>
