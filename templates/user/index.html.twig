@@ -28,9 +28,9 @@
             <button type="submit" class="btn"> Enregistrer </button>
         {% endif %}
 
-        {% if isModified == false %}
-            <button type="button" class="btn"> <a href="{{ path('app_user_update',{id: app.user.id}) }}"> Modifier </a> </button>
-        {% endif %}
+{#        {% if isModified == false %}#}
+{#            <button type="button" class="btn"> <a href="{{ path('app_user_update',{id: app.user.id}) }}"> Modifier </a> </button>#}
+{#        {% endif %}#}
         {{ form_end(user_form,{render_rest: false}) }}
 
     </div>
