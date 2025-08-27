@@ -9,7 +9,9 @@
 
     <div class="container">
         <div class="field"><label>Nom de la sortie:</label> <span>{{ sortie.nom }}</span></div>
-        <div class="field"><label>Campus Organisateur:</label> <span>{{ sortie.site.nom }}</span></div>
+        <div class="field"><label>Campus :</label> <span>{{ sortie.site.nom }}</span></div>
+
+        <div class="field"><label> Organisateur :</label> <span>{{ sortie.organisateur.nom }}</span></div>
 
         <div class="field"><label>Date et heure de la sortie:</label> <span>{{ sortie.dateHeureDebut|date('d/m/Y H:m') }}</span></div>
         <div class="field"><label>Lieu:</label> <span>{{ sortie.lieu.nom }}</span></div>
