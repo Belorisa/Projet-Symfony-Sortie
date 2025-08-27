@@ -13,7 +13,7 @@ body {
     flex-direction: column;
 }
 
-h1  {
+h1 {
     text-align: center;
     text-shadow: 2px 2px #000;
     text-transform: uppercase;
@@ -33,6 +33,7 @@ header img.title {
         max-height: 900px;
     }
 }
+
 @media (max-width: 768px) {
     .create-event {
         display: none;
@@ -59,7 +60,6 @@ main {
 }
 
 /*---------------------------------------------------------------------------------------*/
-
 
 
 nav {
@@ -92,7 +92,7 @@ form {
     background: rgba(0, 0, 0, 0.5); /* même overlay sombre que .card */
     padding: 1.5rem;
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
     color: #fff;
     max-width: 600px;
     margin: 2rem auto;
@@ -143,34 +143,32 @@ form .btn {
 
 form .btn:hover {
     background: #e6b75f;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 .remember-me {
-    display: inline-flex;        /* met texte et checkbox sur la même ligne */
-    align-items: center;         /* centre verticalement la case par rapport au texte */
-    gap: 4px;                    /* espace entre checkbox et texte */
-    white-space: nowrap;          /* texte sur une seule ligne */
+    display: inline-flex; /* met texte et checkbox sur la même ligne */
+    align-items: center; /* centre verticalement la case par rapport au texte */
+    gap: 4px; /* espace entre checkbox et texte */
+    white-space: nowrap; /* texte sur une seule ligne */
 }
 
 .remember-me input {
-    vertical-align: middle;      /* renforce l’alignement vertical avec le texte */
+    vertical-align: middle; /* renforce l’alignement vertical avec le texte */
     margin-top: 1rem;
     margin-left: 1rem;
 }
 
 
-
-
 /* Centrer le bouton */
-.btn-position  {
+.btn-position {
     display: flex;
     justify-content: center;
     margin-top: 1rem;
 }
 
 .btn a {
-    color: inherit;       /* garde la couleur du bouton */
+    color: inherit; /* garde la couleur du bouton */
     text-decoration: none; /* supprime le soulignement */
     display: block;
 }
@@ -178,29 +176,29 @@ form .btn:hover {
 /* Animations */
 
 @keyframes flicker {
-    0%, 100% { opacity: 1; }
-    40% { opacity: 0.9; }
-    45% { opacity: 0.4; }
-    50% { opacity: 0.7; }
-    55% { opacity: 0.3; }
-    60% { opacity: 0.9; }
-    70% { opacity: 1; }
+    0%, 100% {opacity: 1;}
+    40% {opacity: 0.9;}
+    45% {opacity: 0.4;}
+    50% {opacity: 0.7;}
+    55% {opacity: 0.3;}
+    60% {opacity: 0.9;}
+    70% {opacity: 1;}
 }
 
 @keyframes shake {
-    0%, 100% { transform: translate(0); }
-    25% { transform: translate(-1px, 1px); }
-    50% { transform: translate(2px, -1px); }
-    75% { transform: translate(-2px, 2px); }
+    0%, 100% {transform: translate(0);}
+    25% {transform: translate(-1px, 1px);}
+    50% {transform: translate(2px, -1px);}
+    75% {transform: translate(-2px, 2px);}
 }
 
 @keyframes glitch {
-    0% { transform: none; }
-    20% { transform: skew(0.5deg, 0.5deg); }
-    40% { transform: translate(-2px, 2px) skew(-0.5deg, -0.5deg); }
-    60% { transform: translate(2px, -2px); }
-    80% { transform: none; }
-    100% { transform: translate(-1px, 1px); }
+    0% {transform: none;}
+    20% {transform: skew(0.5deg, 0.5deg);}
+    40% {transform: translate(-2px, 2px) skew(-0.5deg, -0.5deg);}
+    60% {transform: translate(2px, -2px);}
+    80% {transform: none;}
+    100% {transform: translate(-1px, 1px);}
 }
 
 /* -----------------------------------------------------------------------------*/
@@ -218,7 +216,7 @@ form .btn:hover {
     /* fond du site + overlay translucide */
     background: rgba(0, 0, 0, 0.4);
     border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 
     font-family: 'Share Tech Mono', monospace;
     font-size: 1rem;
@@ -230,7 +228,7 @@ form .btn:hover {
 .field {
     display: flex;
     justify-content: space-between;
-    border-bottom: 1px dashed rgba(255,255,255,0.3);
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
     padding: 0.5rem 0;
 }
 
@@ -265,11 +263,13 @@ h1 {
     .container {
         grid-template-columns: 1fr; /* une seule colonne */
     }
+
     .field {
         flex-direction: column;
         border-bottom: none;
         padding: 0.8rem 0;
     }
+
     .field label {
         margin-bottom: 0.3rem;
     }
@@ -298,7 +298,7 @@ h1 {
     background: rgba(0, 0, 0, 0.5); /* overlay sombre */
     border-radius: 12px;
     padding: 1.5rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
     color: #fff;
     display: flex;
     flex-direction: column;
@@ -308,7 +308,7 @@ h1 {
 /* Effet au survol */
 .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
 }
 
 /* Titre de la sortie */
@@ -339,9 +339,11 @@ h2, h3 {
     .sortie-list {
         grid-template-columns: 1fr; /* 1 carte par ligne */
     }
+
     .card {
         padding: 1rem;
     }
+
     .card h4 {
         font-size: 1.1rem;
     }

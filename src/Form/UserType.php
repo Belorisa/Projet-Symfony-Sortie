@@ -29,9 +29,7 @@ class UserType extends AbstractType
             ->add('campus', EntityType::class, [
                 'class' => Site::class,
                 'choice_label' => 'nom',
-            ])
-
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
