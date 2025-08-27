@@ -6,7 +6,7 @@
 parameters:
     sortie:
         nb_max: 9
-
+    photos_directory: '%kernel.project_dir%/public/uploads/photos'
 
 services:
     # default configuration for services in *this* file
