@@ -52,16 +52,27 @@
         <article class="card">
         <h4>{{ sortie.nom }}</h4>
         <span>Site : {{ sortie.site.nom }}</span>
-        <span>Date Début Sortie : {{ sortie.dateHeureDebut|date('Y/m/d') }}</span>
-        <span>Date Fin Inscription : {{ sortie.dateLimiteInscription|date('Y/m/d') }}</span>
+        <span>Date Début Sortie : {{ sortie.dateHeureDebut|date('d/m/Y') }}</span>
+        <span>Date Fin Inscription : {{ sortie.dateLimiteInscription|date('d/m/Y') }}</span>
         <span>Nombre de places maximum : {{ sortie.nbInscriptionMax }} </span>
+        <span>Organisateur : {{ sortie.getOrganisateur().nom }} {{ sortie.getOrganisateur().prenom }}</span>
+
         </article>
     </a>
     {% endfor %}
 
 </section>
 
-
+    <!--présentation pagination-->
+    <section>
+        {% if page > 1 %}
+            <a href="{{ path('sortie_list', {'page': page - 1}) }}">Page précédente ◀ </a>&nbsp;
+        {% endif %}
+        <span> page {{ page }}/{{ total_pages }} </span>
+        {% if page < total_pages %}
+            <a href="{{ path('sortie_list', {'page': page + 1}) }}">▶ Page suivante</a>&nbsp;
+        {% endif %}
+    </section>
 
 {% endblock %}
 

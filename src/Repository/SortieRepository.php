@@ -22,7 +22,7 @@ class SortieRepository extends ServiceEntityRepository
 
     public function findAllSorties(int $nPerPage, int $offset): Paginator {
         $qB = $this->createQueryBuilder('s')
-            ->orderBy('s.dateHeureDebut', 'DESC')
+            ->orderBy('s.dateHeureDebut', 'ASC')
             ->setFirstResult($offset)
             ->setMaxResults($nPerPage)
             ->getQuery();
@@ -30,11 +30,13 @@ class SortieRepository extends ServiceEntityRepository
             return new Paginator($qB);
     }
 
+    //fonction pour retourner les sorties par campus
+
 
     //fonction pour récupérer les 3 sorties du moment page accueil
     public function findSortiesByDate(Datetime $date): array {
         return $this->createQueryBuilder('s')
-            ->orderBy('s.dateHeureDebut', 'DESC')
+            ->orderBy('s.dateHeureDebut', 'ASC')
             ->setFirstResult(0)
             ->setMaxResults(3)
             ->getQuery()
