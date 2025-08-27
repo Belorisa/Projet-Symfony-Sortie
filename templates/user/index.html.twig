@@ -8,10 +8,11 @@
 
 {% block body %}
 
-    <h1>Profil</h1>
+    <section class="">
+        <h1>Profil</h1>
 
-<div class = "row justify-content-center">
-    <div class = "col-6">
+        <div class = "row justify-content-center">
+            <div class = "col-6">
 
 
        {{ form_start(user_form) }}
@@ -35,10 +36,27 @@
         {% endif %}
         {{ form_end(user_form,{render_rest: false}) }}
 
-    </div>
-</div>
-
-
+            </div>
+        </div>
+    </section>
+    <section class="">
+        <h4>Sorties organisées</h4>
+        {% if(sortiesOrganisees is not empty) %}
+        <div class = "row justify-content-center">
+            <div class = "col-6">
+                {%  for sortie in sortiesOrganisees %}
+                <article class="card">
+                    <h4>{{ sortie.nom }}</h4>
+                    <span>Date : {{ sortie.dateHeureDebut|date('d/m/Y') }}</span>
+                    <a href="{{ path('sortie_detail', {id : sortie.id }) }}">Détails</a>
+                </article>
+                {% endfor %}
+            </div>
+        </div>
+{%  else %}
+    <p>Aucune sortie organisée</p>
+{% endif %}
+    </section>
 
 
 {% endblock %}
