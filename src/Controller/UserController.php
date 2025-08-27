@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Sortie;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Form\UserType;
+use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,7 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class UserController extends AbstractController
 {
     #[Route('/user/{id}', name: 'app_user')]
-    public function index(User $user, Request $request): Response
+    public function index(User $user, Request $request, SortieRepository $sortieRepository): Response
     {
         $form = $this->createForm(UserType::class, $user);
 
@@ -23,9 +25,25 @@ final class UserController extends AbstractController
 
         $isModified = false;
 
+        //recuperer les sorties organisées par l'utilisateur
+        $criterias = ['organisateur' => $user,];
+
+        $orderBy = ['dateHeureDebut' => 'ASC'];
+
+        $sortiesOrganisees = $sortieRepository->findBy(
+            $criterias, $orderBy
+            //['dateHeureDebut' => 'ASC'],
+        );
+
+        //recuperer les inscriptions de l'utilisateur
+
+
+
+
         return $this->render('user/index.html.twig', [
             'user_form' => $form,
             'isModified' => $isModified,
+            'sortiesOrganisees' => $sortiesOrganisees
         ]);
     }
 

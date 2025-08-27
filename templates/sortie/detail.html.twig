@@ -5,7 +5,6 @@
 
 {% block body %}
 
-
     <h1>Afficher une sortie</h1>
 
     <div class="container">
@@ -14,10 +13,10 @@
 
         <div class="field"><label> Organisateur :</label> <span>{{ sortie.organisateur.nom }}</span></div>
 
-        <div class="field"><label>Date et heure de la sortie:</label> <span>{{ sortie.dateHeureDebut|date('Y/m/d H:m') }}</span></div>
+        <div class="field"><label>Date et heure de la sortie:</label> <span>{{ sortie.dateHeureDebut|date('d/m/Y H:m') }}</span></div>
         <div class="field"><label>Lieu:</label> <span>{{ sortie.lieu.nom }}</span></div>
 
-        <div class="field"><label>Date limite d'inscription:</label> <span>{{ sortie.dateLimiteInscription|date('Y/m/d') }}</span></div>
+        <div class="field"><label>Date limite d'inscription:</label> <span>{{ sortie.dateLimiteInscription|date('d/m/Y') }}</span></div>
         <div class="field"><label>Rue:</label> <span>{{ sortie.lieu.rue }}</span></div>
 
         <div class="field"><label>Nombre de places:</label> <span>{{ sortie.nbInscriptionMax }}</span></div>
@@ -28,7 +27,6 @@
 
         <div class="field"><label>Longitude:</label> <span>{{ sortie.lieu.longitude }}</span></div>
         <div class="field"><label>Latitude:</label> <span>{{ sortie.lieu.latitude }}</span></div>
-
     </div>
 
     {% if app.user not in listUsers and sortie.dateLimiteInscription > "now" and sortie.etat == "OUVERTE"   %}
@@ -36,11 +34,25 @@
     {% endif %}
 
     {% if app.user in listUsers and sortie.etat != "EN COURS" %}
-    <a href="{{ path('sortie_deinscription',{id: sortie.id}) }}">Ce déinscrire</a>
+    <a href="{{ path('sortie_deinscription',{id: sortie.id}) }}">Se désinscrire</a>
     {% endif %}
 
-    {% for user in listUsers %}
-        {{ user.nom }}
-    {% endfor %}
+    <section>
+        <legend>👉Liste des participants : </legend>
+        <table>
+            <tr>
+                <th>Pseudo</th>
+                <th>Nom Prénom</th>
+                <th>Profil</th>
+            </tr>
+            {% for user in sortie.users %}
+                <tr>
+                    <td>{{ user.pseudo }}</td>
+                    <td>{{ user.nom }}  {{ user.prenom }}</td>
+                    <td><a href="{{ path('app_user', {id: user.id}) }}">Voir 👆</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </section>
 
 {% endblock %}
