@@ -51,7 +51,131 @@ class SortieRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    //
+    public function findSortie(array $filters,int $nPerPage, int $offset): Paginator
+    {
+        $qB = $this->createQueryBuilder('s')
+            ->setFirstResult($offset)
+            ->setMaxResults($nPerPage);
+
+        if (!empty($filters['site'])) {
+            $qB->andWhere('s.site = :site')
+                ->setParameter('site', $filters['site']);
+        }
+        if (!empty($filters['contents'])) {
+            $qB->andWhere('s.nom LIKE :contents')
+                ->setParameter('contents', '%' . $filters['contents'] . '%');
+        }
+
+        $user = $filters['user'] ?? null;
+
+        // Filter: user is the organizer
+        if (!empty($filters['orga']) && $user) {
+            $qB->andWhere('s.organisateur = :user')
+                ->setParameter('user', $user);
+        }
+
+        // Filter: user is registered in the sortie
+        if (!empty($filters['inscrit']) && $user) {
+            $qB->andWhere(':user MEMBER OF s.participants')
+                ->setParameter('user', $user);
+        }
+
+        // Filter: past or future events
+        $now = new \DateTime();
+
+        $minDate = (new \DateTime())->modify('-1 month')->setTime(0, 0);
+        $qB->andWhere('s.dateHeureDebut >= :minDate')
+            ->setParameter('minDate', $minDate);
+
+        if (!empty($filters['passe'])) {
+            $qB->andWhere('s.dateHeureDebut < :now');
+        } else {
+            $qB->andWhere('s.dateHeureDebut >= :now');
+        }
+
+        if (!empty($filters['apres'])) {
+            $qB->andWhere('s.dateHeureDebut >= :apres')
+                ->setParameter('apres', $filters['apres']);
+        }
+
+        if (!empty($filters['avant'])) {
+            $qB->andWhere('s.dateHeureDebut <= :avant')
+                ->setParameter('avant', $filters['avant']);
+        }
+
+        $qB->setParameter('now', $now);
+
+        return new Paginator($qB);
+    }
+
+    public function countFiltered(array $filters): int
+    {
+        $qB = $this->createQueryBuilder('s')
+            ->select('COUNT(s.id)');
+        if (!empty($filters['site'])) {
+            $qB->andWhere('s.site = :site')
+                ->setParameter('site', $filters['site']);
+        }
+        if (!empty($filters['contents'])) {
+            $qB->andWhere('s.nom LIKE :contents')
+                ->setParameter('contents', '%' . $filters['contents'] . '%');
+        }
+
+        $user = $filters['user'] ?? null;
+
+        // Filter: user is the organizer
+        if (!empty($filters['orga']) && $user) {
+            $qB->andWhere('s.organisateur = :user')
+                ->setParameter('user', $user);
+        }
+
+        // Filter: user is registered in the sortie
+        if (!empty($filters['inscrit']) && $user) {
+            $qB->andWhere(':user MEMBER OF s.participants')
+                ->setParameter('user', $user);
+        }
+
+        // Filter: past or future events
+        $now = new \DateTime();
+
+        $minDate = (new \DateTime())->modify('-1 month')->setTime(0, 0);
+        $qB->andWhere('s.dateHeureDebut >= :minDate')
+            ->setParameter('minDate', $minDate);
+
+        if (!empty($filters['passe'])) {
+            $qB->andWhere('s.dateHeureDebut < :now');
+        } else {
+            $qB->andWhere('s.dateHeureDebut >= :now');
+        }
+
+        if (!empty($filters['apres']) && $filters['apres'] >= $minDate) {
+            $qB->andWhere('s.dateHeureDebut >= :apres')
+                ->setParameter('apres', $filters['apres']);
+        }
+
+        if (!empty($filters['avant'])) {
+            $qB->andWhere('s.dateHeureDebut <= :avant')
+                ->setParameter('avant', $filters['avant']);
+        }
+
+        $qB->setParameter('now', $now);
+
+        return (int) $qB->getQuery()->getSingleScalarResult();
+    }
+
+
+    public function countAll(): int
+    {
+        $qB = $this->createQueryBuilder('s')
+            ->select('COUNT(s.id)');
+
+        $minDate = (new \DateTime())->modify('-1 month');
+        $qB->andWhere('s.dateHeureDebut >= :minDate')
+            ->setParameter('minDate', $minDate);
+
+        return (int) $qB->getQuery()->getSingleScalarResult();
+    }
+
 
 
     
