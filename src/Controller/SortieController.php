@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Sortie;
 use App\Entity\User;
 use App\Form\SortieType;
+use App\Form\UserType;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\SortieRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -70,6 +71,63 @@ final class SortieController extends AbstractController
         return $this->render('sortie/sortie_form.html.twig', [
             'sortie_form' => $form,
         ]);
+    }
+
+    #[Route('/detail/{id}', name: '_detail')]
+    public function sortieDetail(Sortie $sortie, EntityManagerInterface $em): Response
+    {
+        $sortieAffichage = $em->getRepository(Sortie::class)->find($sortie->getId());
+        $listUsers = $sortieAffichage->getUsers();
+
+        return $this->render('sortie/detail.html.twig', [
+            'sortie' => $sortieAffichage,
+            'listUsers' => $listUsers,
+
+        ]);
+    }
+
+    #[Route('/inscription/{id}', name: '_inscription')]
+    public function sortieInscription(Sortie $sortie,EntityManagerInterface $em): Response
+    {
+
+
+        $user = $this->getUser();
+        if($sortie->getEtat()=="ouverte" && $sortie->getDateLimiteInscription()>new \DateTime())
+        {
+            $sortie->addUser($user);
+            $em->persist($sortie);
+            $em->flush();
+        }
+
+
+
+
+        return $this->redirectToRoute('sortie_detail', [
+            'id' => $sortie->getId(),
+        ]);
+    }
+
+    #[Route('/deinscription/{id}', name: '_deinscription')]
+    public function sortieDeinscription(Sortie $sortie,EntityManagerInterface $em): Response
+    {
+
+
+        $user = $this->getUser();
+        if($sortie->getEtat()!="enCours" && $sortie->getDateLimiteInscription()>new \DateTime())
+        {
+            $sortie->removeUser($user);
+            $em->persist($sortie);
+            $em->flush();
+            $this->addFlash('success', 'Vous êtes bien inscrit');
+            return $this->redirectToRoute('sortie_detail', [
+                'id' => $sortie->getId(),
+            ]);
+        }
+        $this->addFlash('error', 'Cette action ne peut être effectué');
+        return $this->redirectToRoute('sortie_detail', [
+            'id' => $sortie->getId(),
+        ]);
+
     }
 
 
