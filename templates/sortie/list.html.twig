@@ -4,9 +4,47 @@
 
 {% block body %}
 <h2>Evènements</h2>
+    <form action="{{ path('sortie_list') }}" name="criteres" method="get">
+        <label for="site">Site :</label>
+        <select name="site" id="site">
+            <option value="">-- Tous les sites --</option>
+            {% for site in sites %}
+                <option value="{{ site.id }}">{{ site.nom }}</option>
+            {% endfor %}
+        </select>
+        <label for="contents">Le nom de la sortie contient :</label>
+        <input type="text" name="contents" id="contents">
+        <div>
+            <label >filtres :</label>
+            <input type="checkbox" id="orga" name="orga" value="orga">
+            <label for="orga">Sortie dont je suis l'organisateur/trice</label>
+            <input type="checkbox" id="inscrit" name="inscrit" value="inscrit">
+            <label for="inscrit">Sortie auxquelles je suis inscrit/e</label>
+            <input type="checkbox" id="pasinscrit" name="pasinscrit" value="pasinscrit">
+            <label for="pasinscrit">Sortie auxquelles je ne suis pas inscrit/e</label>
+            <input type="checkbox" id="passe" name="passe" value="passe">
+            <label for="passe">Sortie passées</label>
+            <div>
+                <label for="apres">Après</label>
+                <input type="date" name="apres" id="apres">
+                <label for="avant">Avant</label>
+                <input type="date" name="avant" id="avant">
+            </div>
+        </div>
 
+        <input type="submit" value="Recherche">
+    </form>
     <!--gestion des pages si plus de 10 évènements-->
     <h3> Liste des évènements publiés : </h3>
+
+    <section>
+        {% if page > 1 %}
+            <a href="{{ path('sortie_list', app.request.query.all | merge({'page' : page-1})) }}">Page Précédente</a>
+        {% endif %}
+        {% if page < totalPages %}
+            <a href="{{ path('sortie_list',app.request.query.all | merge({'page' : page+1})) }}">Page Suivante</a>
+        {% endif %}
+    </section>
 
 <section class="sortie-list">
     {%  for sortie in sorties %}

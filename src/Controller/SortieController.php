@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Site;
 use App\Entity\Sortie;
 use App\Entity\User;
 use App\Form\SortieType;
@@ -21,27 +22,53 @@ final class SortieController extends AbstractController
         name: '_list',
         requirements: ['page' => '\d+'],
         defaults: ['page' => 1],
-        methods: ['GET']
+        methods: ['GET','POST']
     )]
-    public function list(SortieRepository $sortieRepository, int $page, ParameterBagInterface $parameters): Response
+    public function list(SortieRepository $sortieRepository, int $page, ParameterBagInterface $parameters,EntityManagerInterface $em,Request $request): Response
     {
         $nbPerPage = $parameters->get('sortie')['nb_max'];
         $offset = ($page - 1) * $nbPerPage;
-        //tableau de critères de requete
-        $criterias = [
-            //'isPublished' => true
-        ];
 
+        $list = $em->getRepository(Site::class)->findAll();
         $sorties = $sortieRepository->findAllSorties($nbPerPage, $offset);
 
+        $orga = $request->query->get("orga");
+        $site = $request->query->get("site");
+        $contents = $request->query->get("contents");
+        $inscrit = $request->query->get("inscrit");
+        $pasinscrit = $request->query->get("pasinscrit");
+        $passe = $request->query->get("passe");
+        $avant = $request->query->get("avant");
+        $apres = $request->query->get("apres");
+        $user = $this->getUser();
 
-        $total =$sortieRepository->count($criterias);
+        $total = $sortieRepository->countAll();
+
+        if($orga || $apres|| $avant|| $site || $contents || $inscrit || $pasinscrit || $passe){
+            $filters = [
+                'site' => $site,
+                'contents' => $contents,
+                'orga' => $orga,
+                'inscrit' => $inscrit,
+                'pasinscrit' => $pasinscrit,
+                'passe' => $passe,
+                'user' => $user,
+                'avant' => $avant ? new \DateTime($avant) : null,
+                'apres' => $apres ? new \DateTime($apres) : null,
+            ];
+            $sorties = $sortieRepository->findSortie($filters, $nbPerPage, $offset);
+            $total = $sortieRepository->countFiltered($filters);
+        }
+
+
+
         $totalPages = ceil($total/$nbPerPage);
 
         return $this->render('sortie/list.html.twig', [
                 'sorties' => $sorties,
                 'page' => $page,
-                'total_pages' => $totalPages,
+                'totalPages' => $totalPages,
+                'sites' => $list,
                 ]
         );
     }
