@@ -9,6 +9,7 @@ use App\Entity\User;
 use Doctrine\DBAL\Types\DateType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,8 +21,14 @@ class SortieType extends AbstractType
     {
         $builder
             ->add('nom')
-            ->add('dateHeureDebut',DateTimeType::class,['widget' => 'single_text','required' => true])
-            ->add('duree')
+            ->add('dateHeureDebut',DateTimeType::class, [
+                'label' => 'Début de l\'évènement',
+                'widget' => 'single_text',
+                'required' => true
+            ])
+            ->add('duree', ChoiceType::class, [
+                'label' => 'Durée',
+            ])
             ->add('dateLimiteInscription',DateTimeType::class,['widget' => 'single_text','required' => true])
             ->add('nbInscriptionMax')
             ->add('infoSortie')
@@ -33,7 +40,9 @@ class SortieType extends AbstractType
                 'class' => Lieu::class,
                 'choice_label' => 'nom',
             ])
-            ->add('submit', SubmitType::class)
+            ->add('submit', SubmitType::class, [
+                'label' => 'Valider',
+                ])
         ;
     }
 
