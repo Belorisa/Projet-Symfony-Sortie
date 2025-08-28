@@ -24,9 +24,10 @@ class UserType extends AbstractType
             ->add('prenom')
             ->add('email')
             ->add('telephone')
-            ->add('password', PasswordType::class, [
+            ->add('plainPassword', PasswordType::class, [
                 'label' => 'Mot de passe',
                 'always_empty' => true,
+                'mapped' => false,
                 ])
             ->add('campus', EntityType::class, [
                 'class' => Site::class,
@@ -39,7 +40,7 @@ class UserType extends AbstractType
                 'constraints' => [
                     new File([
                         'maxSize' => '2M',
-                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/jpg'],
+                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/jpg', 'image/html'],
                         'mimeTypesMessage' => 'Veuillez uploader une image valide (JPEG ou PNG)',
                     ])
                 ],
