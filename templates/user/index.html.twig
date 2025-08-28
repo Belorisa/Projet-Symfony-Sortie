@@ -8,26 +8,31 @@
 
 {% block body %}
 
-    <section class="">
-        <h1>Profil</h1>
+    <h1>Profil</h1>
+    <div>
+        <img src="{{ asset('../assets/images/logoV3.png') }}" alt="logo">
+    </div>
+<section class="">
+         <div class = "row justify-content-center">
+             <div class = "col-6">
 
-<div class = "row justify-content-center">
-    <div class = "col-6">
+               {{ form_start(user_form) }}
 
-       {{ form_start(user_form) }}
+                {{ form_row(user_form.pseudo) }}
+                {{ form_row(user_form.nom) }}
+                {{ form_row(user_form.prenom) }}
+                {{ form_row(user_form.email) }}
+                {{ form_row(user_form.telephone) }}
+                {{ form_row(user_form.campus) }}
+                {% if isModified == true %}
+                {{ form_row(user_form.plainPassword) }}
+                {% endif %}
 
-        {{ form_row(user_form.pseudo) }}
-        {{ form_row(user_form.nom) }}
-        {{ form_row(user_form.prenom) }}
-        {{ form_row(user_form.email) }}
-        {{ form_row(user_form.telephone) }}
-        {{ form_row(user_form.campus) }}
-        {% if isModified == true %}
-        {{ form_row(user_form.plainPassword) }}
-        {% endif %}
-        {% if isModified == true %}
-            <button type="submit" class="btn"> Enregistrer </button>
-        {% endif %}
+                {% if isModified == true %}
+                    <label for="">Photo de profil : <input type="file" name="file" accept="image/*"></label>
+                    <br>
+                    <button type="submit" class="btn"> Enregistrer </button>
+                {% endif %}
 
         {% if isModified == false and app.user.id == user.id %}
             <div class="btn-position">
@@ -39,6 +44,7 @@
             </div>
         </div>
     </section>
+
     <section class="">
         <h4>Sorties organisées</h4>
         {% if(sortiesOrganisees is not empty) %}

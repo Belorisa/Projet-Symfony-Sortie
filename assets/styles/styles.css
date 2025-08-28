@@ -348,3 +348,74 @@ h2, h3 {
         font-size: 1.1rem;
     }
 }
+ /* ----------------------------------------- */
+
+.participants-section {
+    margin-top: 15px;
+    font-family: Arial, sans-serif;
+}
+
+/* Conteneur avec scroll */
+.table-container {
+    max-height: 120px;  /* Hauteur fixe */
+    overflow-y: auto;   /* Barre de défilement verticale */
+    border: 2px solid #000;
+    border-radius: 5px;
+    width: 320px;       /* Largeur fixe */
+}
+
+/* Table */
+.participants-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Entête du tableau */
+.participants-table th {
+    position: sticky;   /* Entête fixe */
+    top: 0;
+    background-color: #763e09;
+    padding: 6px;
+    border-bottom: 2px solid #000;
+    font-weight: bold;
+    text-align: left;
+}
+
+/* Cellules */
+.participants-table td {
+    padding: 6px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Ligne sur deux pour améliorer la lisibilité */
+.participants-table tr:nth-child(even) {
+    background-color: #763e09;
+}
+
+/* Ligne vide quand pas de participants */
+.participants-table .empty {
+    text-align: center;
+    font-style: italic;
+    color: #000000;
+}
+.participants-table th:first-child,
+.participants-table td:first-child {
+    border-right: 2px solid #000; /* Bordure verticale noire */
+}
+
+/* Facultatif : améliore un peu le rendu */
+.participants-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.participants-table th,
+.participants-table td {
+    padding: 6px;
+}
+
+.participants-table a {
+    text-decoration: none; /* supprime le soulignement */
+    display: block;
+    color: #0b5edb;
+}

@@ -58,22 +58,30 @@
         {% endif %}
     {% endif %}
 
-    <section>
-        <legend>👉Liste des participants : </legend>
-        <table>
-            <tr>
-                <th>Pseudo</th>
-                <th>Nom Prénom</th>
-                <th>Profil</th>
-            </tr>
-            {% for user in sortie.users %}
+    <section class="participants-section">
+        <legend>👉 Liste des participants :</legend>
+        <div class="table-container">
+            <table class="participants-table">
+                <thead>
                 <tr>
-                    <td>{{ user.pseudo }}</td>
-                    <td>{{ user.nom }}  {{ user.prenom }}</td>
-                    <td><a href="{{ path('app_user', {id: user.id}) }}">Voir 👆</a></td>
+                    <th>Pseudo</th>
+                    <th>Nom - Prénom</th>
                 </tr>
-            {% endfor %}
-        </table>
+                </thead>
+                <tbody>
+                {% for user in sortie.users %}
+                    <tr>
+                        <td>{{ user.pseudo }}</td>
+                        <td><a href="{{ path('app_user', {id: user.id}) }}">{{ user.nom }}  {{ user.prenom }}</a></td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="2" class="empty">Aucun participant inscrit</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </section>
 
 {% endblock %}
