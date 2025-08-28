@@ -33,7 +33,7 @@
                      {% if (not is_granted('IS_AUTHENTICATED')) %}
                      <li><a href="{{ path('app_register') }}">Inscription</a></li>
                      <li><a href="{{ path('app_login') }}">Se connecter</a></li>
-                     {% else %}
+                     {% elseif not is_mobile() %}
                      <li class="create-event"><a href="{{ path('sortie_creation') }}">Créer un évènement</a></li>
                      <li><a href="{{ path('app_logout') }}">Déconnexion</a></li>
                      {% endif %}
