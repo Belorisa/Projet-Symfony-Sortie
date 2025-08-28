@@ -19,13 +19,13 @@ class Sortie
     #[ORM\Column(length: 255)]
     private ?string $nom = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'datetime',nullable: true)]
     private ?\DateTime $dateHeureDebut = null;
 
     #[ORM\Column(length: 255)]
     private ?string $duree = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'datetime',nullable: true)]
     private ?\DateTime $dateLimiteInscription = null;
 
     #[ORM\Column]
@@ -82,7 +82,7 @@ class Sortie
         return $this->dateHeureDebut;
     }
 
-    public function setDateHeureDebut(\DateTime $dateHeureDebut): static
+    public function setDateHeureDebut(?\DateTime $dateHeureDebut): static
     {
         $this->dateHeureDebut = $dateHeureDebut;
 
@@ -106,7 +106,7 @@ class Sortie
         return $this->dateLimiteInscription;
     }
 
-    public function setDateLimiteInscription(\DateTime $dateLimiteInscription): static
+    public function setDateLimiteInscription(?\DateTime $dateLimiteInscription): static
     {
         $this->dateLimiteInscription = $dateLimiteInscription;
 

@@ -14,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class SortieType extends AbstractType
 {
@@ -24,12 +25,18 @@ class SortieType extends AbstractType
             ->add('dateHeureDebut',DateTimeType::class, [
                 'label' => 'Début de l\'évènement',
                 'widget' => 'single_text',
-                'required' => true
+                'required' => false,
+                'constraints' => [
+                    new NotNull(['message' => 'Merci de remplir le champ date de début']),
+                ],
             ])
-            ->add('duree', ChoiceType::class, [
-                'label' => 'Durée',
+            ->add('duree')
+            ->add('dateLimiteInscription',DateTimeType::class,['widget' => 'single_text',
+                'required' => false,
+                'constraints' => [
+                    new NotNull(['message' => 'Merci de remplir le champ date limite']),
+                ],
             ])
-            ->add('dateLimiteInscription',DateTimeType::class,['widget' => 'single_text','required' => true])
             ->add('nbInscriptionMax')
             ->add('infoSortie')
             ->add('site', EntityType::class, [

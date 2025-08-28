@@ -43,7 +43,8 @@ final class UserController extends AbstractController
         return $this->render('user/index.html.twig', [
             'user_form' => $form,
             'isModified' => $isModified,
-            'sortiesOrganisees' => $sortiesOrganisees
+            'sortiesOrganisees' => $sortiesOrganisees,
+            'user' => $user,
         ]);
     }
 
