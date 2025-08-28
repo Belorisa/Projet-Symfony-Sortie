@@ -67,35 +67,33 @@ final class UserController extends AbstractController
             $user->setAdministrateur(false);
             $user->setActif(true);
 
-            $file = ($form->get('photo')->getData());
+            $file = $form->get('photo')->getData();
 
             if ($file instanceof UploadedFile) {
                 $dir = $parameterBag->get('sortie')['photos_directory'];
-                $name = $fileUploader->upload($file, $user->getPhoto(), $dir
-                );
 
-                if ($user->getPhoto() && file_exists($dir . '/' . $user->getPhoto())) {
-                    unlink($dir . '/' . $user->getPhoto());
-                    }
-                    $user->setPhoto($name);
+                // Delete the old photo if it exists
+                $oldPhoto = $user->getPhoto();
+                if ($oldPhoto && file_exists($dir . '/' . $oldPhoto)) {
+                    unlink($dir . '/' . $oldPhoto);
                 }
 
-                $em->persist($user);
+                // Upload the new photo
+                $newPhotoName = $fileUploader->upload($file, 'user-photo', $dir);
+                $user->setPhoto($newPhotoName);
+
                 $em->flush();
                 return $this->redirectToRoute('app_user', ['id' => $user->getId()]);
             }
-
-
+        }
             $isModified = true;
-
             $sortiesOrganisees = $em->getRepository(Sortie::class)->findBy(['organisateur' => $user]);
 
             return $this->render('user/index.html.twig', [
                 'user_form' => $form,
                 'isModified' => $isModified,
-                'sortiesOrganisees' => $sortiesOrganisees
-
-
+                'sortiesOrganisees' => $sortiesOrganisees,
+                'user' => $user,
             ]);
 
         }
