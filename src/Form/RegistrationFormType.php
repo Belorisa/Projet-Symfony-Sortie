@@ -4,26 +4,52 @@ namespace App\Form;
 
 use App\Entity\Site;
 use App\Entity\User;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class RegistrationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('pseudo')
+            ->add('pseudo', TextType::class, [
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Le pseudo est obligatoire',
+                    ]),
+                ]
+            ])
             ->add('nom')
             ->add('prenom')
             ->add('telephone')
-            ->add('email')
+            ->add('email', EmailType::class, [
+                'constraints' => [
+                    new Email([
+                        'message' => 'Veuillez saisir une adresse email valide',
+                    ]),
+                    new NotBlank([
+                        'message' => 'Veuillez saisir une adresse email',
+                    ]),
+                    new Regex([
+                        'pattern' => '/@campus-eni\.fr$/',
+                        'message' => 'L\'adresse email doit se terminer par @campus-eni.fr',
+                    ]),
+                ],
+                'attr' => [
+                    'placeholder' => 'example@campus-eni.fr'
+                ]
+            ])
             ->add('campus',EntityType::class, [
                'class' => Site::class,
                 'choice_label' => function (Site $site) {
