@@ -6,10 +6,13 @@ use App\Entity\Sortie;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Form\UserType;
+use App\Helper\FileUploader;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -28,6 +31,7 @@ final class UserController extends AbstractController
         $isModified = false;
 
         //recuperer les sorties organisées par l'utilisateur
+
         $criterias = ['organisateur' => $user,];
 
         $orderBy = ['dateHeureDebut' => 'ASC'];
@@ -40,8 +44,6 @@ final class UserController extends AbstractController
         //recuperer les inscriptions de l'utilisateur
 
 
-
-
         return $this->render('user/index.html.twig', [
             'user_form' => $form,
             'isModified' => $isModified,
@@ -50,90 +52,54 @@ final class UserController extends AbstractController
         ]);
     }
 
-//    #[Route('/user/update/{id}', name: 'app_user_update')]
-//    public function update(User $user, EntityManagerInterface $em, UserPasswordHasherInterface $userPasswordHasher, Request $request) : Response
-//    {
-//        $form = $this->createForm(RegistrationFormType::class, $user);
-//        $form->handleRequest($request);
-//
-//        if ($form->isSubmitted() && $form->isValid()) {
-//            /** @var string $plainPassword */
-//            $plainPassword = $form->get('plainPassword')->getData();
-//
-//            // encode the plain password
-//            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
-//            $user->setAdministrateur(false);
-//            $user->setActif(true);
-//
-//            $em->persist($user);
-//            $em->flush();
-//            return $this->redirectToRoute('app_user',['id'=>$user->getId()]);
-//        }
-//
-//
-//        $isModified = true;
-//
-//        $sortiesOrganisees = $em->getRepository(Sortie::class)->findBy(['organisateur' => $user]);
-//
-//        return $this->render('user/index.html.twig', [
-//           'user_form' => $form,
-//           'isModified' => $isModified,
-//           'sortiesOrganisees' => $sortiesOrganisees
-//
-//
-//        ]);
-//
-//    }
-
-
-
     #[Route('/user/update/{id}', name: 'app_user_update')]
-    public function update(
-        User $user,
-        Request $request,
-        EntityManagerInterface $em,
-        SluggerInterface $slugger
-    ): Response
+    public function update(User $user, EntityManagerInterface $em,ParameterBagInterface $parameterBag, UserPasswordHasherInterface $userPasswordHasher, FileUploader $fileUploader, Request $request) : Response
     {
-        // Création du formulaire
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Gestion de l'upload de la photo
-            $photoFile = $form->get('photo')->getData();
+            /** @var string $plainPassword */
+            $plainPassword = $form->get('plainPassword')->getData();
 
-            if ($photoFile) {
-                $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename . '-' . uniqid() . '.' . $photoFile->guessExtension();
+            // encode the plain password
+            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+            $user->setAdministrateur(false);
+            $user->setActif(true);
 
-                try {
-                    $photoFile->move(
-                        $this->getParameter('photos_directory'),
-                        $newFilename
-                    );
-                    $user->setPhoto($newFilename);
-                } catch (FileException $e) {
-                    $this->addFlash('error', 'Erreur lors du téléchargement de la photo.');
+            $file = ($form->get('photo')->getData());
+
+            if ($file instanceof UploadedFile) {
+                $dir = $parameterBag->get('sortie')['photos_directory'];
+                $name = $fileUploader->upload($file, $user->getPhoto(), $dir
+                );
+
+                if ($user->getPhoto() && file_exists($dir . '/' . $user->getPhoto())) {
+                    unlink($dir . '/' . $user->getPhoto());
+                    }
+                    $user->setPhoto($name);
                 }
+
+                $em->persist($user);
+                $em->flush();
+                return $this->redirectToRoute('app_user', ['id' => $user->getId()]);
             }
 
-            $em->persist($user);
-            $em->flush();
 
-            $this->addFlash('success', 'Profil mis à jour avec succès !');
-            return $this->redirectToRoute('app_user', ['id' => $user->getId()]);
+            $isModified = true;
+
+            $sortiesOrganisees = $em->getRepository(Sortie::class)->findBy(['organisateur' => $user]);
+
+            return $this->render('user/index.html.twig', [
+                'user_form' => $form,
+                'isModified' => $isModified,
+                'sortiesOrganisees' => $sortiesOrganisees
+
+
+            ]);
+
         }
 
-        return $this->render('user/index.html.twig', [
-            'user_form' => $form->createView(),
-            'isModified' => true,
-            'sortiesOrganisees' => $user->getSortiesOrganisees(), // récupère toutes les sorties organisées
-        ]);
+
     }
 
-
-
-
-}
