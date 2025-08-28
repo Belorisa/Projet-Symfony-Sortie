@@ -40,6 +40,9 @@
 
                 </ul>
             </nav>
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger">{{ message }}</div>
+            {% endfor %}
         </header>
         <main>
             {% block body %}
