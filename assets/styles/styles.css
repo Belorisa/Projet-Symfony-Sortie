@@ -419,3 +419,17 @@ h2, h3 {
     display: block;
     color: #0b5edb;
 }
+
+.reset-pwd a{
+    color: inherit; /* garde la couleur du bouton */
+    text-decoration: none; /* supprime le soulignement */
+    display: block;
+}
+
+.reset-pwd a:hover {
+    color: black;
+}
+
+.imgProfil {
+    text-align: center;
+}

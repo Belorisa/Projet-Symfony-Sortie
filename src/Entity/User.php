@@ -80,7 +80,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->photo;
     }
 
-    public function setPhoto(?string $photo): self
+    public function setPhoto(?string $photo): static
     {
         $this->photo = $photo;
         return $this;
