@@ -23,9 +23,14 @@
                 <ul class="nav-links" id="navLinks">
 
                     <li><a href="{{ path('main') }}">Accueil</a></li>
-                    {% if is_granted('IS_AUTHENTICATED') %}
-                    <li><a href="{{ path('app_user', { id : app.user.id }) }}">Profil Utilisateur</a></li>
+
+                    {% if is_granted('IS_AUTHENTICATED') and is_granted('ROLE_ADMIN') %}
+                        <li><a href="{{ path('app_user', { id : app.user.id }) }}">Profil Administrateur</a></li>
+                    {% elseif is_granted('IS_AUTHENTICATED') and is_granted('ROLE_USER') %}
+                        <li><a href="{{ path('app_user', { id : app.user.id }) }}">Profil Utilisateur</a></li>
                     {%  endif %}
+
+
 
                     <li><a href="{{ path('sortie_list') }}">Evènements</a></li>
 
