@@ -85,7 +85,6 @@ final class UserController extends AbstractController
                 return $this->redirectToRoute('app_user', ['id' => $user->getId()]);
             }
 
-
             $isModified = true;
 
             $sortiesOrganisees = $em->getRepository(Sortie::class)->findBy(['organisateur' => $user]);
