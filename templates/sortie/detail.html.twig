@@ -5,7 +5,9 @@
 
 {% block body %}
 
+    {% if sortie.etat != 'ANNULER' %}
     <h1>Afficher une sortie</h1>
+
 
     <div class="container">
         <div class="field"><label>Nom de la sortie:</label> <span>{{ sortie.nom }}</span></div>
@@ -22,19 +24,38 @@
         <div class="field"><label>Nombre de places:</label> <span>{{ sortie.nbInscriptionMax }}</span></div>
         <div class="field"><label>Code postal:</label> <span>{{ sortie.lieu.ville.codePostal }}</span></div>
 
+        <div class="field"><label>Nombre de places restantes:</label> <span>{{ placeRestante }}</span></div>
+
         <div class="field"><label>Durée:</label> <span>{{ sortie.duree }}</span></div>
         <div class="field"><label>Description et infos:</label> <span>{{ sortie.infoSortie }}</span></div>
 
         <div class="field"><label>Longitude:</label> <span>{{ sortie.lieu.longitude }}</span></div>
         <div class="field"><label>Latitude:</label> <span>{{ sortie.lieu.latitude }}</span></div>
     </div>
-
-    {% if app.user not in listUsers and sortie.dateLimiteInscription > "now" and sortie.etat == "OUVERTE"   %}
-    <a href="{{ path('sortie_inscription',{id: sortie.id}) }}">S'inscrire</a>
     {% endif %}
 
-    {% if app.user in listUsers and sortie.etat != "EN COURS" %}
-    <a href="{{ path('sortie_deinscription',{id: sortie.id}) }}">Se désinscrire</a>
+    {% if sortie.etat == "ANNULER" %}
+        <h1>Annuler</h1>
+
+        <div class="container">
+            <div class="field"><label>Raison :</label> <span>{{ sortie.infoSortie }}</span></div>
+        </div>
+    {% endif %}
+
+
+            {% if app.user not in listUsers and sortie.dateLimiteInscription > "now" and sortie.etat == "OUVERTE" and sortie.etat != "ANNULER" and placeRestante > 0   %}
+        <a href="{{ path('sortie_inscription',{id: sortie.id}) }}">S'inscrire</a>
+    {% endif %}
+
+    {% if app.user in listUsers and sortie.etat != "EN COURS" and sortie.etat != "ANNULER" %}
+        <a href="{{ path('sortie_deinscription',{id: sortie.id}) }}">Se désinscrire</a>
+    {% endif %}
+
+    {% if app.user.id == sortie.organisateur.id  %}
+        <a href="{{ path('sortie_update',{id: sortie.id}) }}">Modifier</a>
+        {% if sortie.etat != "ANNULER" %}
+            <a href="{{ path('sortie_annulation',{id: sortie.id}) }}">Annuler</a>
+        {% endif %}
     {% endif %}
 
     <section>

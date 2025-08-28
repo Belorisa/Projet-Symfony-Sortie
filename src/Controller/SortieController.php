@@ -95,6 +95,12 @@ final class SortieController extends AbstractController
             $this->addFlash('success', 'l\'activité à bien été crée');
             return $this->redirectToRoute('sortie_list');
         }
+        else{
+            if($form->isSubmitted())
+            {
+                $this->addFlash('error','Please fix the error in the form');
+            }
+        }
         return $this->render('sortie/sortie_form.html.twig', [
             'sortie_form' => $form,
         ]);
@@ -105,10 +111,12 @@ final class SortieController extends AbstractController
     {
         $sortieAffichage = $em->getRepository(Sortie::class)->find($sortie->getId());
         $listUsers = $sortieAffichage->getUsers();
+        $placeRestante =  $sortie->getNbInscriptionMax() - count($listUsers);
 
         return $this->render('sortie/detail.html.twig', [
             'sortie' => $sortieAffichage,
             'listUsers' => $listUsers,
+            'placeRestante' => $placeRestante,
 
         ]);
     }
@@ -155,6 +163,57 @@ final class SortieController extends AbstractController
             'id' => $sortie->getId(),
         ]);
 
+    }
+
+
+
+    #[Route('/update/{id}', name: '_update')]
+    public function updateSortie(EntityManagerInterface $em,Request $request,Sortie $sortie ): Response
+    {
+
+        $form = $this->createForm(SortieType::class, $sortie);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+
+            $user = $this->getUser();
+
+            $sortie->setOrganisateur($user);
+            $sortie->setEtat("Créée");
+
+            $em->persist($sortie);
+            $em->flush();
+
+            $this->addFlash('success', 'l\'activité à bien été crée');
+            return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
+        }
+
+        return $this->render('sortie/sortie_form.html.twig', [
+            'sortie_form' => $form,
+        ]);
+    }
+
+    #[Route('/annulation/{id}', name: '_annulation')]
+    public function sortieAnnuler(Sortie $sortie, EntityManagerInterface $em,Request $request): Response
+    {
+        $annul = $request->query->get("annul");
+
+        if($annul)
+        {
+
+            dump($annul);
+            $sortie->setInfoSortie($annul);
+            $sortie->setEtat("ANNULER");
+
+            $em->persist($sortie);
+            $em->flush();
+            $this->redirectToRoute('sortie_list');
+        }
+
+        return $this->render('sortie/annulation.html.twig', [
+            'sortie' => $sortie,
+        ]);
     }
 
 
