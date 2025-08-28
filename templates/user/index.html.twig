@@ -43,6 +43,12 @@
         {% endif %}
 
 
+                {% if is_granted('IS_AUTHENTICATED') and is_granted('ROLE_ADMIN') %}
+                    <div class="btn-position">
+                        <button type="button" class="btn"> <a href="{{ path('app_register') }}"> 🔄GESTION DES UTILISATEURS </a> </button>
+                    </div>
+                {% endif %}
+
             </div>
         </div>
     </section>
