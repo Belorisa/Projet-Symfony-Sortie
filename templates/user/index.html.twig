@@ -9,37 +9,39 @@
 {% block body %}
 
     <h1>Profil</h1>
-    <div>
-        <img src="{{ asset('../assets/images/logoV3.png') }}" alt="logo">
+    <div class="imgProfil">
+        <img src="{{ asset('uploads/photos/'~user.photo) }}" alt="logo">
     </div>
 <section class="">
          <div class = "row justify-content-center">
              <div class = "col-6">
 
                {{ form_start(user_form) }}
-
-                {{ form_row(user_form.pseudo) }}
+                 <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+                 {{ form_row(user_form._token) }}
+                 {{ form_row(user_form.pseudo) }}
                 {{ form_row(user_form.nom) }}
                 {{ form_row(user_form.prenom) }}
                 {{ form_row(user_form.email) }}
                 {{ form_row(user_form.telephone) }}
                 {{ form_row(user_form.campus) }}
                 {% if isModified == true %}
-                {{ form_row(user_form.plainPassword) }}
+                    {{ form_row(user_form.plainPassword) }}
+                    {{ form_row(user_form.photo) }}
                 {% endif %}
 
                 {% if isModified == true %}
-                    <label for="">Photo de profil : <input type="file" name="file" accept="image/*"></label>
-                    <br>
-                    <button type="submit" class="btn"> Enregistrer </button>
+                    {{ form_row(user_form.submit) }}
+                    {{ form_end(user_form,{render_rest: false}) }}
                 {% endif %}
 
         {% if isModified == false and app.user.id == user.id %}
             <div class="btn-position">
-            <button type="button" class="btn"> <a href="{{ path('app_user_update',{id: app.user.id}) }}"> Modifier </a> </button>
+                <button type="button" class="btn"> <a href="{{ path('app_user_update',{id: user.id}) }}"> Modifier </a> </button>
             </div>
+            {{ form_end(user_form,{render_rest: false}) }}
         {% endif %}
-        {{ form_end(user_form,{render_rest: false}) }}
+
 
             </div>
         </div>

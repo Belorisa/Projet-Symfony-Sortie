@@ -5,6 +5,9 @@ namespace App\Form;
 use App\Entity\Site;
 use App\Entity\User;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -33,6 +36,10 @@ class RegistrationFormType extends AbstractType
             ->add('nom')
             ->add('prenom')
             ->add('telephone')
+            ->add("photo", FileType::class, [
+                'mapped' => false,
+                'required' => false,
+            ])
             ->add('email', EmailType::class, [
                 'constraints' => [
                     new Email([
@@ -56,8 +63,10 @@ class RegistrationFormType extends AbstractType
                 return $site->getNom();
                 }
             ])
-            ->add('agreeTerms', CheckboxType::class, [
+            ->add('agreeTerms', HiddenType::class, [
                 'mapped' => false,
+                'data' => true,
+                'required' => false,
                 'constraints' => [
                     new IsTrue([
                         'message' => 'You should agree to our terms.',
@@ -82,6 +91,9 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
+            ->add('submit', SubmitType::class, [
+                'label' => 'Enregistrer',
+            ]);
         ;
     }
 
