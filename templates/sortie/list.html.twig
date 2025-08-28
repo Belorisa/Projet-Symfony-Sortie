@@ -15,19 +15,19 @@
         <label for="contents">Le nom de la sortie contient :</label>
         <input type="text" name="contents" id="contents">
         <div>
-            <label >filtres :</label>
+            <label >Filtres :</label>
             <input type="checkbox" id="orga" name="orga" value="orga">
-            <label for="orga">Sortie dont je suis l'organisateur/trice</label>
+            <label for="orga">Sorties dont je suis l'organisateur/trice</label>
             <input type="checkbox" id="inscrit" name="inscrit" value="inscrit">
-            <label for="inscrit">Sortie auxquelles je suis inscrit/e</label>
+            <label for="inscrit">Sorties auxquelles je suis inscrit/e</label>
             <input type="checkbox" id="pasinscrit" name="pasinscrit" value="pasinscrit">
-            <label for="pasinscrit">Sortie auxquelles je ne suis pas inscrit/e</label>
+            <label for="pasinscrit">Sorties auxquelles je ne suis pas inscrit/e</label>
             <input type="checkbox" id="passe" name="passe" value="passe">
-            <label for="passe">Sortie passées</label>
+            <label for="passe">Sorties passées</label>
             <div>
-                <label for="apres">Après</label>
+                <label for="apres">Après le : </label>
                 <input type="date" name="apres" id="apres">
-                <label for="avant">Avant</label>
+                <label for="avant">Avant le : </label>
                 <input type="date" name="avant" id="avant">
             </div>
         </div>
@@ -49,6 +49,7 @@
 <section class="sortie-list">
     {%  for sortie in sorties %}
     <a href="{{ path('sortie_detail', {id : sortie.id }) }}">
+        {% if sortie.etat != 'ANNULER' %}
         <article class="card">
         <h4>{{ sortie.nom }}</h4>
         <span>Site : {{ sortie.site.nom }}</span>
@@ -56,8 +57,18 @@
         <span>Date Fin Inscription : {{ sortie.dateLimiteInscription|date('d/m/Y') }}</span>
         <span>Nombre de places maximum : {{ sortie.nbInscriptionMax }} </span>
         <span>Organisateur : {{ sortie.getOrganisateur().nom }} {{ sortie.getOrganisateur().prenom }}</span>
-
         </article>
+        {% endif %}
+        {% if sortie.etat == "ANNULER" %}
+            <article class="card">
+                <h4>{{ sortie.nom }}</h4>
+                <span>Site : {{ sortie.site.nom }}</span>
+                <span> {{ sortie.etat }} </span>
+                <span>Raison : {{ sortie.infoSortie }}</span>
+            </article>
+        {% endif %}
+
+
     </a>
     {% endfor %}
 
@@ -68,8 +79,8 @@
         {% if page > 1 %}
             <a href="{{ path('sortie_list', {'page': page - 1}) }}">Page précédente ◀ </a>&nbsp;
         {% endif %}
-        <span> page {{ page }}/{{ total_pages }} </span>
-        {% if page < total_pages %}
+        <span> page {{ page }}/{{ totalPages }} </span>
+        {% if page < totalPages %}
             <a href="{{ path('sortie_list', {'page': page + 1}) }}">▶ Page suivante</a>&nbsp;
         {% endif %}
     </section>
