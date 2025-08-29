@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Création d'une ville{% endblock %}
+
+{% block body %}
+
+    <h1>Création d'une ville</h1>
+
+
+
+    {{ form_start(ville_form) }}
+
+
+    {{ form_row(ville_form.nom) }}
+    {{ form_row(ville_form.codePostal) }}
+
+    <div class="btn-position">
+        {{ form_row(ville_form.submit) }}
+    </div>
+
+    {{ form_end(ville_form) }}
+{% endblock %}

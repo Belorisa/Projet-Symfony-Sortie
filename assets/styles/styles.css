@@ -173,6 +173,22 @@ form .btn:hover {
     display: block;
 }
 
+/* Boutons  administrateur : hors formulaire*/
+.btn-option {
+    background: #ffd27f; /* même jaune chaud */
+    color: #000;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+ .btn-option:hover {
+    background: #e6b75f;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
 /* Animations */
 
 @keyframes flicker {
@@ -311,6 +327,24 @@ h1 {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
 }
 
+.card-profil {
+    background: rgba(0, 0, 0, 0.5); /* overlay sombre */
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    margin-bottom: 1rem;
+}
+/* Effet au survol */
+.card-profil:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+}
+
+
 /* Titre de la sortie */
 .card h4 {
     font-size: 1.3rem;
@@ -325,6 +359,9 @@ h1 {
     font-size: 0.95rem;
     color: #eee;
 }
+
+
+
 
 /* Titres principaux */
 h2, h3 {
@@ -420,6 +457,17 @@ h2, h3 {
     color: #0b5edb;
 }
 
+.action_impossible {
+    color: #000000;
+    background-color: darkgrey;
+    opacity: 0.5;
+}
+
+.message {
+    margin: 5em;
+    width: 70%;
+}
+
 .reset-pwd a{
     color: inherit; /* garde la couleur du bouton */
     text-decoration: none; /* supprime le soulignement */
@@ -432,4 +480,24 @@ h2, h3 {
 
 .imgProfil {
     text-align: center;
+}
+
+select {
+    background-color: #592e05;
+    color: white;
+}
+
+select option {
+    background-color: #592e05;
+    color: white;
+}
+
+section a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+section a:hover {
+    text-decoration: underline;
 }
