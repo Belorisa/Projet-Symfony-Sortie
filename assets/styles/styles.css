@@ -311,6 +311,24 @@ h1 {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
 }
 
+.card-profil {
+    background: rgba(0, 0, 0, 0.5); /* overlay sombre */
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    margin-bottom: 1rem;
+}
+/* Effet au survol */
+.card-profil:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+}
+
+
 /* Titre de la sortie */
 .card h4 {
     font-size: 1.3rem;
@@ -325,6 +343,9 @@ h1 {
     font-size: 0.95rem;
     color: #eee;
 }
+
+
+
 
 /* Titres principaux */
 h2, h3 {
@@ -432,4 +453,24 @@ h2, h3 {
 
 .imgProfil {
     text-align: center;
+}
+
+select {
+    background-color: #592e05;
+    color: white;
+}
+
+select option {
+    background-color: #592e05;
+    color: white;
+}
+
+section a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+section a:hover {
+    text-decoration: underline;
 }

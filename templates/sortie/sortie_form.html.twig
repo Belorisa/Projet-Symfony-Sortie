@@ -16,7 +16,16 @@
     {{ form_row(sortie_form.nbInscriptionMax) }}
     {{ form_row(sortie_form.infoSortie) }}
     {{ form_row(sortie_form.site) }}
-    {{ form_row(sortie_form.lieu) }}
+
+    <div >
+        {{ form_row(sortie_form.lieu) }}
+
+        <a href="{{ path('app_lieu_new') }}" class="btn btn-outline-secondary mt-2">
+            + Ajouter un lieu
+        </a>
+
+    </div>
+
 
     <div class="btn-position">
         {{ form_row(sortie_form.submit) }}

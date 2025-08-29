@@ -37,14 +37,6 @@
     <!--gestion des pages si plus de 10 évènements-->
     <h3> Liste des évènements publiés : </h3>
 
-    <section>
-        {% if page > 1 %}
-            <a href="{{ path('sortie_list', app.request.query.all | merge({'page' : page-1})) }}">Page Précédente</a>
-        {% endif %}
-        {% if page < totalPages %}
-            <a href="{{ path('sortie_list',app.request.query.all | merge({'page' : page+1})) }}">Page Suivante</a>
-        {% endif %}
-    </section>
 
 <section class="sortie-list">
     {%  for sortie in sorties %}
@@ -75,7 +67,7 @@
 </section>
 
     <!--présentation pagination-->
-    <section>
+    <section class="section">
         {% if page > 1 %}
             <a href="{{ path('sortie_list', {'page': page - 1}) }}">Page précédente ◀ </a>&nbsp;
         {% endif %}
