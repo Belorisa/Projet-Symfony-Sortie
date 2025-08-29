@@ -7,8 +7,17 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
+#[Assert\Expression(
+    "this.getDateHeureDebut()<=this.getDuree()",
+    message: "Le début ne peut être avant la fin de la sortie"
+)]
+#[Assert\Expression(
+    "this.getDateLimiteInscription()<=this.getDateHeureDebut()",
+    message: "On ne doit plus pouvoir s'inscrire après le début de la sortie"
+)]
 class Sortie
 {
     #[ORM\Id]
@@ -22,8 +31,8 @@ class Sortie
     #[ORM\Column(type: 'datetime',nullable: true)]
     private ?\DateTime $dateHeureDebut = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $duree = null;
+    #[ORM\Column(type: 'datetime',nullable: true)]
+    private ?\DateTime $dateHeureFin = null;
 
     #[ORM\Column(type: 'datetime',nullable: true)]
     private ?\DateTime $dateLimiteInscription = null;
@@ -89,14 +98,14 @@ class Sortie
         return $this;
     }
 
-    public function getDuree(): ?string
+    public function getDuree(): ?\DateTime
     {
-        return $this->duree;
+        return $this->dateHeureFin;
     }
 
-    public function setDuree(string $duree): static
+    public function setDuree(?\DateTime $dateHeureFin): static
     {
-        $this->duree = $duree;
+        $this->dateHeureFin = $dateHeureFin;
 
         return $this;
     }

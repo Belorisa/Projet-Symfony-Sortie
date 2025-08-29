@@ -72,5 +72,10 @@
 {% endif %}
     </section>
 
+    <form action="{{ path('app_user_userlist') }}" method="post" enctype="multipart/form-data">
+        <label for="listusers"></label>
+        <input type="file" name="listusers" id="listusers">
+        <input type="submit">
+    </form>
 
 {% endblock %}
