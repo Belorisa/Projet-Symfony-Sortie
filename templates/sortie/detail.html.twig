@@ -26,7 +26,7 @@
 
         <div class="field"><label>Nombre de places restantes:</label> <span>{{ placeRestante }}</span></div>
 
-        <div class="field"><label>Durée:</label> <span>{{ sortie.duree }}</span></div>
+        <div class="field"><label>Durée:</label> <span>{{ sortie.duree|date('d/m/Y H:m') }}</span></div>
         <div class="field"><label>Description et infos:</label> <span>{{ sortie.infoSortie }}</span></div>
 
         <div class="field"><label>Longitude:</label> <span>{{ sortie.lieu.longitude }}</span></div>
