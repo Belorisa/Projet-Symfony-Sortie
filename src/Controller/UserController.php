@@ -99,6 +99,66 @@ final class UserController extends AbstractController
 
         }
 
+    //gestion des utilisateurs par l'administrateur
+
+    //rôle admin défini dans security.yaml
+    #[Route('/admin/user_list', name: 'admin_user_list')]
+    public function listUsers(Request $request, EntityManagerInterface $em): Response {
+        $users = $em->getRepository(User::class)->findAll();
+
+        return $this->render('user/user_list.html.twig', [
+            'users' => $users
+        ]);
+    }
+
+    //rôle admin défini dans security.yaml
+    #[Route('/admin/user_desactiver/{id}',
+        name: 'admin_user_desactiver',
+        requirements: ['id' => '\d+'],
+        methods: 'GET')]
+    public function desactiverUser(User $user, EntityManagerInterface $em): Response {
+        $user->setActif(false);
+        $em->flush();
+
+        //message de succès
+        $this->addFlash('success', '✅ Utilisateur désactivé avec succès.');
+        return $this->redirectToRoute('admin_user_list');
+    }
+
+    //rôle admin défini dans security.yaml
+    #[Route('/admin/user_activer/{id}',
+        name: 'admin_user_activer',
+        requirements: ['id' => '\d+'],
+        methods: 'GET')]
+    public function activerUser(User $user, EntityManagerInterface $em): Response {
+        $user->setActif(true);
+        $em->flush();
+
+        //message de succès
+        $this->addFlash('success', '✅ Utilisateur activé avec succès.');
+        return $this->redirectToRoute('admin_user_list');
+    }
+
+    //rôle admin défini dans security.yaml
+    #[Route('/admin/user_delete/{id}',
+        name: 'admin_user_delete',
+        requirements: ['id' => '\d+'],
+        methods: 'GET' )]
+    public function deleteUser(User $user, EntityManagerInterface $em, Request $request): Response {
+        if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->get('token')))
+        {
+            $em->remove($user);
+            $em->flush();
+
+            //message de succès
+            $this->addFlash('success', '✅ Utilisateur supprimé avec succès.');
+        } else {
+            $this->addFlash('danger', '⛔ ⚠ Suppression impossible');
+
+        }
+
+            return $this->redirectToRoute('admin_user_list');
+    }
 
     }
 
