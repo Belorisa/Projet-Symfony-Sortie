@@ -7,9 +7,11 @@ use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Form\UserType;
 use App\Helper\FileUploader;
+use App\Helper\UserCSV;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -53,7 +55,7 @@ final class UserController extends AbstractController
     }
 
     #[Route('/user/update/{id}', name: 'app_user_update')]
-    public function update(User $user, EntityManagerInterface $em,ParameterBagInterface $parameterBag, UserPasswordHasherInterface $userPasswordHasher, FileUploader $fileUploader, Request $request) : Response
+    public function update(User $user, EntityManagerInterface $em,ParameterBagInterface $parameterBag, UserPasswordHasherInterface $userPasswordHasher, FileUploader $fileUploader, Request $request,Security $security) : Response
     {
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
@@ -61,9 +63,11 @@ final class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var string $plainPassword */
             $plainPassword = $form->get('plainPassword')->getData();
-
-            // encode the plain password
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+            if (!empty($plainPassword)) {
+                $user->setPassword(
+                    $userPasswordHasher->hashPassword($user, $plainPassword)
+                );
+            }
             $user->setAdministrateur(false);
             $user->setActif(true);
 
@@ -83,9 +87,11 @@ final class UserController extends AbstractController
                 $user->setPhoto($newPhotoName);
 
                 $em->flush();
-                return $this->redirectToRoute('app_user', ['id' => $user->getId()]);
+
             }
 
+            $security->login($user);
+            return $this->redirectToRoute('app_user', ['id' => $user->getId()]);
         }
             $isModified = true;
             $sortiesOrganisees = $em->getRepository(Sortie::class)->findBy(['organisateur' => $user]);
@@ -158,6 +164,17 @@ final class UserController extends AbstractController
         }
 
             return $this->redirectToRoute('admin_user_list');
+    }
+
+    #[Route('/userlist', name: 'app_user_userlist')]
+    public function addUsersList(Request $request,UserCSV $CSV) : Response
+    {
+        $listusers= $request->files->get("listusers");
+
+        $CSV->InsertUsers($listusers);
+
+        return $this->redirectToRoute('sortie_list');
+
     }
 
     }

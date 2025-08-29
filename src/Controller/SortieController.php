@@ -87,7 +87,7 @@ final class SortieController extends AbstractController
             $user = $this->getUser();
 
             $sortie->setOrganisateur($user);
-            $sortie->setEtat("Créée");
+            $sortie->setEtat("OUVERTE");
 
             $em->persist($sortie);
             $em->flush();
