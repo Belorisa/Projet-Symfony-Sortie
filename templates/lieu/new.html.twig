@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Création de lieu{% endblock %}
+
+{% block body %}
+
+    <h1>Création d'un lieu</h1>
+
+
+
+    {{ form_start(Lieu_form) }}
+
+
+    {{ form_row(Lieu_form.nom) }}
+    {{ form_row(Lieu_form.rue) }}
+    {{ form_row(Lieu_form.latitude) }}
+    {{ form_row(Lieu_form.longitude) }}
+
+    <div>
+        {{ form_row(Lieu_form.ville) }}
+        <a href="{{ path('app_ville_nouvelle') }}" class="btn btn-outline-secondary mt-2">
+            + Ajouter une ville
+        </a>
+    </div>
+
+    <div class="btn-position">
+        {{ form_row(Lieu_form.submit) }}
+    </div>
+
+    {{ form_end(Lieu_form) }}
+
+{% endblock %}
