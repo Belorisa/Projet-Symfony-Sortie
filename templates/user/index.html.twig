@@ -35,7 +35,7 @@
                     {{ form_end(user_form,{render_rest: false}) }}
                 {% endif %}
 
-                {% if isModified == false and app.user.id == user.id %}
+                {% if isModified == false and app.user.id == user.id or is_granted('ROLE_ADMIN')  %}
                     <div class="btn-position">
                         <button type="button" class="btn"> <a href="{{ path('app_user_update',{id: user.id}) }}"> Modifier </a> </button>
                     </div>

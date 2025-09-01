@@ -13,13 +13,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 final class UserController extends AbstractController
 {
@@ -57,7 +55,7 @@ final class UserController extends AbstractController
     #[Route('/user/update/{id}', name: 'app_user_update')]
     public function update(User $user, EntityManagerInterface $em,ParameterBagInterface $parameterBag, UserPasswordHasherInterface $userPasswordHasher, FileUploader $fileUploader, Request $request,Security $security) : Response
     {
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -68,10 +66,15 @@ final class UserController extends AbstractController
                     $userPasswordHasher->hashPassword($user, $plainPassword)
                 );
             }
+            else
+            {
+                $user->setPassword($user->getPassword());
+            }
             $user->setAdministrateur(false);
             $user->setActif(true);
 
             $file = $form->get('photo')->getData();
+
 
             if ($file instanceof UploadedFile) {
                 $dir = $parameterBag->get('sortie')['photos_directory'];
@@ -86,11 +89,11 @@ final class UserController extends AbstractController
                 $newPhotoName = $fileUploader->upload($file, 'user-photo', $dir);
                 $user->setPhoto($newPhotoName);
 
-                $em->flush();
-
             }
-
-            $security->login($user);
+            if(!$this->isGranted('ROLE_ADMIN') ){ //Si l'utilisateur qui modifie le profil n'est pas administrateur
+                $security->login($user);
+            }
+            $em->flush();
             return $this->redirectToRoute('app_user', ['id' => $user->getId()]);
         }
             $isModified = true;
