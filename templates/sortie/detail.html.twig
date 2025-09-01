@@ -15,7 +15,7 @@
 
         <div class="field"><label> Organisateur :</label> <span>{{ sortie.organisateur.nom }}</span></div>
 
-        <div class="field"><label>Date et heure de la sortie:</label> <span>{{ sortie.dateHeureDebut|date('d/m/Y H:m') }}</span></div>
+        <div class="field"><label>Date et heure de la sortie:</label> <span>{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</span></div>
         <div class="field"><label>Lieu:</label> <span>{{ sortie.lieu.nom }}</span></div>
 
         <div class="field"><label>Date limite d'inscription:</label> <span>{{ sortie.dateLimiteInscription|date('d/m/Y') }}</span></div>
@@ -26,7 +26,7 @@
 
         <div class="field"><label>Nombre de places restantes:</label> <span>{{ placeRestante }}</span></div>
 
-        <div class="field"><label>Durée:</label> <span>{{ sortie.duree|date('d/m/Y H:m') }}</span></div>
+        <div class="field"><label>Date de Fin:</label> <span>{{ sortie.DateHeureFin|date('d/m/Y H:i') }}</span></div>
         <div class="field"><label>Description et infos:</label> <span>{{ sortie.infoSortie }}</span></div>
 
         <div class="field"><label>Longitude:</label> <span>{{ sortie.lieu.longitude }}</span></div>
