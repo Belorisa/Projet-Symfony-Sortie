@@ -1,0 +1,5 @@
+<h2>Bonjour {{ user.prenom }} {{ user.nom }}</h2>
+<p>Petit rappel : votre sortie <strong>{{ sortie.nom }}</strong> commence dans 48 heures 🎉</p>
+<p>Date : {{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</p>
+<p>Lieu : {{ sortie.lieu.nom }}</p>
+<p>À bientôt !</p>

@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
 #[Assert\Expression(
-    "this.getDateHeureDebut()<=this.getDuree()",
+    "this.getDateHeureDebut()<=this.getDateHeureFin()",
     message: "Le début ne peut être avant la fin de la sortie"
 )]
 #[Assert\Expression(
@@ -98,12 +98,12 @@ class Sortie
         return $this;
     }
 
-    public function getDuree(): ?\DateTime
+    public function getDateHeureFin(): ?\DateTime
     {
         return $this->dateHeureFin;
     }
 
-    public function setDuree(?\DateTime $dateHeureFin): static
+    public function setDateHeureFin(?\DateTime $dateHeureFin): static
     {
         $this->dateHeureFin = $dateHeureFin;
 
