@@ -1,0 +1,5 @@
+<h2>Bonjour {{ user.prenom }} {{ user.nom }}</h2>
+<p>Vous êtes inscrit à la sortie <strong>{{ sortie.nom }}</strong>.</p>
+<p>Date : {{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</p>
+<p>Lieu : {{ sortie.lieu.nom }}</p>
+<p>Merci de votre participation !</p>

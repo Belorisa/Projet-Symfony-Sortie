@@ -7,12 +7,19 @@ use App\Entity\Sortie;
 use App\Entity\User;
 use App\Form\SortieType;
 use App\Form\UserType;
+use App\Message\ReminderMessage;
+use App\MessageHandler\SendReminderMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\SortieRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Messenger\MessageBus;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
 #[Route('/sortie', name: 'sortie')]
 
@@ -122,20 +129,38 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/inscription/{id}', name: '_inscription')]
-    public function sortieInscription(Sortie $sortie,EntityManagerInterface $em): Response
+    public function sortieInscription(Sortie $sortie,EntityManagerInterface $em,MailerInterface $mailer,MessageBusInterface $bus): Response
     {
-
 
         $user = $this->getUser();
         if($sortie->getEtat()=="OUVERTE" && $sortie->getDateLimiteInscription()>new \DateTime())
         {
             $sortie->addUser($user);
+
+            $email = (new Email())
+                ->from('no-reply@sortie.fr')
+                ->to($user->getEmail())
+                ->subject('Confirmation d\'inscription a une sortie')
+                ->html($this->renderView('emails/inscription.html.twig', [
+                    'user' => $user,
+                    'sortie' => $sortie,
+                ]));
+
+            $mailer->send($email);
+
+            $eventStart = $sortie->getDateHeureDebut();
+            $delayInSeconds = $eventStart->getTimestamp() - (new \DateTime())->getTimestamp() - (48*3600);
+            $delayInMs = max(0,$delayInSeconds*1000);
+
+            $bus->dispatch(new ReminderMessage($sortie->getId(),$user->getId()),
+            [
+                new DelayStamp($delayInMs)
+            ]);
+
             $em->persist($sortie);
             $em->flush();
+            $this->addFlash('success', 'Vous êtes bien inscrit');
         }
-
-
-
 
         return $this->redirectToRoute('sortie_detail', [
             'id' => $sortie->getId(),
@@ -143,17 +168,28 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/deinscription/{id}', name: '_deinscription')]
-    public function sortieDeinscription(Sortie $sortie,EntityManagerInterface $em): Response
+    public function sortieDeinscription(Sortie $sortie,EntityManagerInterface $em,MailerInterface $mailer): Response
     {
 
 
         $user = $this->getUser();
         if($sortie->getEtat()!="EN COURS" && $sortie->getDateLimiteInscription()>new \DateTime())
         {
+            $email = (new Email())
+                ->from('no-reply@sortie.fr')
+                ->to($user->getEmail())
+                ->subject('Confirmation de déinscription a une sortie')
+                ->html($this->renderView('emails/déinscription.html.twig', [
+                    'user' => $user,
+                    'sortie' => $sortie,
+                ]));
+
+            $mailer->send($email);
+
             $sortie->removeUser($user);
             $em->persist($sortie);
             $em->flush();
-            $this->addFlash('success', 'Vous êtes bien inscrit');
+            $this->addFlash('success', 'Vous êtes bien déinscrit');
             return $this->redirectToRoute('sortie_detail', [
                 'id' => $sortie->getId(),
             ]);
@@ -180,7 +216,7 @@ final class SortieController extends AbstractController
             $user = $this->getUser();
 
             $sortie->setOrganisateur($user);
-            $sortie->setEtat("Créée");
+            $sortie->setEtat($sortie->getEtat());
 
             $em->persist($sortie);
             $em->flush();

@@ -30,7 +30,7 @@ class SortieType extends AbstractType
                     new NotNull(['message' => 'Merci de remplir le champ date de début']),
                 ],
             ])
-            ->add('duree',DateTimeType::class, [
+            ->add('dateHeureFin',DateTimeType::class, [
                 'label' => 'Fin de l\'évènement',
                 'widget' => 'single_text',
                 'required' => false,

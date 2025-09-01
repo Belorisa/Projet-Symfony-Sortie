@@ -28,6 +28,7 @@ class UserType extends AbstractType
                 'label' => 'Mot de passe',
                 'always_empty' => true,
                 'mapped' => false,
+                'required' => false,
                 ])
             ->add('campus', EntityType::class, [
                 'class' => Site::class,
@@ -44,7 +45,10 @@ class UserType extends AbstractType
                         'mimeTypesMessage' => 'Veuillez uploader une image valide (JPEG ou PNG)',
                     ])
                 ],
-            ]);
+            ])
+        ->add('submit', SubmitType::class, [
+        'label' => 'Enregistrer',
+    ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
