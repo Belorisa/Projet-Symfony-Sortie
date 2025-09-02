@@ -12,7 +12,7 @@
 
     <section class="participants-section">
         <legend>👉 Liste des utilisateurs 👥 :</legend>
-        <div class="">
+        <div class="table-responsive">
             <table class="participants-table">
                 <thead>
                 <tr>
@@ -64,9 +64,18 @@
     </section>
     <section class="">
         {# {% if is_granted('IS_AUTHENTICATED') and is_granted('ROLE_ADMIN') %}  #}
-                    <div class="btn-position">
-                        <button type="button" class="btn btn-option"> <a href="{{ path('app_register') }}"> <strong> 🔄CREER UN PROFIL UTILISATEUR </strong> </a> </button>
-                    </div>
+        <div class="btn-position">
+            <button type="button" class="btn btn-option"> <a href="{{ path('app_register') }}"> <strong> CREER UN PROFIL UTILISATEUR </strong> </a> </button>
+        </div>
+
+        <div class="csv">
+            <h5>Import CSV d'utilisateurs :</h5>
+            <form action="{{ path('admin_user_userlist') }}" method="post" enctype="multipart/form-data">
+                <label for="listusers"></label>
+                <input type="file" name="listusers" id="listusers">
+                <input type="submit">
+            </form>
+        </div>
 {# {% endif %} #}
     </section>
 

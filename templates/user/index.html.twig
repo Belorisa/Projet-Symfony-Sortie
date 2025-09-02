@@ -45,7 +45,7 @@
 
                 {% if is_granted('IS_AUTHENTICATED') and is_granted('ROLE_ADMIN') %}
                     <div class="btn-position">
-                        <button type="button" class="btn btn-option"> <a href="{{ path('admin_user_list') }}"> <strong>🔄 GESTION DES UTILISATEURS 👥 </strong></a> </button>
+                        <button type="button" class="btn btn-option"> <a href="{{ path('admin_user_list') }}"> <strong> GESTION DES UTILISATEURS </strong></a> </button>
                     </div>
                 {% endif %}
 
@@ -71,11 +71,5 @@
     <p>Aucune sortie organisée</p>
 {% endif %}
     </section>
-
-    <form action="{{ path('app_user_userlist') }}" method="post" enctype="multipart/form-data">
-        <label for="listusers"></label>
-        <input type="file" name="listusers" id="listusers">
-        <input type="submit">
-    </form>
 
 {% endblock %}
