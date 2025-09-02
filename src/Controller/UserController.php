@@ -126,6 +126,7 @@ final class UserController extends AbstractController
         if (!$this->isGranted('ROLE_ADMIN' )) {
             $this->addFlash('error', 'Désolé cette action n\'est pas autorisée')  ;
             return $this->redirectToRoute('sortie_list');
+
         }
 
         $users = $em->getRepository(User::class)->findAll();

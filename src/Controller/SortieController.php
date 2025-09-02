@@ -235,7 +235,7 @@ final class SortieController extends AbstractController
 
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
 
-        if ($this->getUser()->getId() != $sortie->getOrganisateur()->getId() || $this->getUser()->getRoles() == "ROLE_ADMIN" ) {
+        if ($this->getUser()->getId() != $sortie->getOrganisateur()->getId() && !$this->isGranted( 'ROLE_ADMIN')) {
             return $this->redirectToRoute('sortie_list');
         }
 
@@ -266,9 +266,8 @@ final class SortieController extends AbstractController
     public function sortieAnnuler(Sortie $sortie, EntityManagerInterface $em,Request $request): Response
     {
 
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
 
-        if ($this->getUser()->getId() != $sortie->getOrganisateur()->getId() || $this->getUser()->getRoles() == "ROLE_ADMIN" ) {
+        if ($this->getUser()->getId() != $sortie->getOrganisateur()->getId() && !$this->isGranted( 'ROLE_ADMIN')) {
                 return $this->redirectToRoute('sortie_list');
         }
 
@@ -276,7 +275,6 @@ final class SortieController extends AbstractController
 
         if($annul)
         {
-
             dump($annul);
             $sortie->setInfoSortie($annul);
             $sortie->setEtat("ANNULEE");
