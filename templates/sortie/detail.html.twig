@@ -43,7 +43,7 @@
     {% endif %}
 
 
-            {% if app.user not in listUsers and sortie.dateLimiteInscription > "now" and sortie.etat == "OUVERTE" and sortie.etat != "ANNULER" and placeRestante > 0   %}
+            {% if app.user not in listUsers and sortie.dateLimiteInscription > "now" and sortie.etat != "ANNULER" or sortie.etat != "CLOTUREE"   %}
         <a href="{{ path('sortie_inscription',{id: sortie.id}) }}">S'inscrire</a>
     {% endif %}
 
