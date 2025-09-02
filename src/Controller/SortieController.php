@@ -7,6 +7,7 @@ use App\Entity\Sortie;
 use App\Entity\User;
 use App\Form\SortieType;
 use App\Form\UserType;
+use App\Helper\PlaceRestante;
 use App\Message\ReminderMessage;
 use App\MessageHandler\SendReminderMessage;
 use Doctrine\ORM\EntityManagerInterface;
@@ -116,22 +117,22 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/detail/{id}', name: '_detail')]
-    public function sortieDetail(Sortie $sortie, EntityManagerInterface $em): Response
+    public function sortieDetail(Sortie $sortie ): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
 
 
-        $sortieAffichage = $em->getRepository(Sortie::class)->find($sortie->getId());
-        $listUsers = $sortieAffichage->getUsers();
-        $placeRestante =  $sortie->getNbInscriptionMax() - count($listUsers);
+        $listUsers = $sortie->getUsers();
+        $placeRestante = $sortie->getNbInscriptionMax() - count($listUsers);
 
-        if (!$sortieAffichage->getOrganisateur()) {
+        if (!$sortie->getOrganisateur()) {
             $this->addFlash('error', 'Cette sortie n’a pas d’organisateur défini.');
             return $this->redirectToRoute('sortie_list');
         }
 
+
         return $this->render('sortie/detail.html.twig', [
-            'sortie' => $sortieAffichage,
+            'sortie' => $sortie,
             'listUsers' => $listUsers,
             'placeRestante' => $placeRestante,
 
@@ -141,6 +142,21 @@ final class SortieController extends AbstractController
     #[Route('/inscription/{id}', name: '_inscription')]
     public function sortieInscription(Sortie $sortie,EntityManagerInterface $em,MailerInterface $mailer,MessageBusInterface $bus): Response
     {
+
+        $listUsers = $sortie->getUsers();
+        $placeRestante = $sortie->getNbInscriptionMax() - count($listUsers);
+
+
+        if($placeRestante == 1 && $sortie->getEtat() != "CLOTUREE")
+        {
+            $sortie->setEtat("CLOTUREE");
+            $em->persist($sortie);
+            $em->flush();
+        }
+        else{
+            $this->addFlash('error','Désolé cette sortie est complète');
+            return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
+        }
 
         $user = $this->getUser();
         if($sortie->getEtat()=="OUVERTE" && $sortie->getDateLimiteInscription()>new \DateTime())
