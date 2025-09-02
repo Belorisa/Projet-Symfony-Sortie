@@ -31,7 +31,9 @@
                 {% endif %}
 
                 {% if isModified == true %}
-                    {{ form_row(user_form.submit) }}
+                    <div class="btn-position">
+                        {{ form_row(user_form.submit) }}
+                    </div>
                     {{ form_end(user_form,{render_rest: false}) }}
                 {% endif %}
 
