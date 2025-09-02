@@ -83,6 +83,8 @@ final class SortieController extends AbstractController
     #[Route('/creation', name: '_creation')]
     public function creationSortie(EntityManagerInterface $em,Request $request ): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
         $sortie = new Sortie();
 
         $form = $this->createForm(SortieType::class, $sortie);
@@ -116,9 +118,17 @@ final class SortieController extends AbstractController
     #[Route('/detail/{id}', name: '_detail')]
     public function sortieDetail(Sortie $sortie, EntityManagerInterface $em): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
+
         $sortieAffichage = $em->getRepository(Sortie::class)->find($sortie->getId());
         $listUsers = $sortieAffichage->getUsers();
         $placeRestante =  $sortie->getNbInscriptionMax() - count($listUsers);
+
+        if (!$sortieAffichage->getOrganisateur()) {
+            $this->addFlash('error', 'Cette sortie n’a pas d’organisateur défini.');
+            return $this->redirectToRoute('sortie_list');
+        }
 
         return $this->render('sortie/detail.html.twig', [
             'sortie' => $sortieAffichage,
@@ -207,6 +217,12 @@ final class SortieController extends AbstractController
     public function updateSortie(EntityManagerInterface $em,Request $request,Sortie $sortie ): Response
     {
 
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
+        if ($this->getUser()->getId() != $sortie->getOrganisateur()->getId() || $this->getUser()->getRoles() == "ROLE_ADMIN" ) {
+            return $this->redirectToRoute('sortie_list');
+        }
+
         $form = $this->createForm(SortieType::class, $sortie);
         $form->handleRequest($request);
 
@@ -221,7 +237,7 @@ final class SortieController extends AbstractController
             $em->persist($sortie);
             $em->flush();
 
-            $this->addFlash('success', 'l\'activité à bien été crée');
+            $this->addFlash('success', 'L\'activité à bien été crée');
             return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
         }
 
@@ -233,6 +249,13 @@ final class SortieController extends AbstractController
     #[Route('/annulation/{id}', name: '_annulation')]
     public function sortieAnnuler(Sortie $sortie, EntityManagerInterface $em,Request $request): Response
     {
+
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
+        if ($this->getUser()->getId() != $sortie->getOrganisateur()->getId() || $this->getUser()->getRoles() == "ROLE_ADMIN" ) {
+                return $this->redirectToRoute('sortie_list');
+        }
+
         $annul = $request->query->get("annul");
 
         if($annul)
