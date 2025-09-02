@@ -55,6 +55,15 @@ final class UserController extends AbstractController
     #[Route('/user/update/{id}', name: 'app_user_update')]
     public function update(User $user, EntityManagerInterface $em,ParameterBagInterface $parameterBag, UserPasswordHasherInterface $userPasswordHasher, FileUploader $fileUploader, Request $request,Security $security) : Response
     {
+
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
+        if ($this->getUser()->getId() != $user->getId() ) {
+            $this->addFlash('error', 'Désolé cette action n\'est pas autorisée')  ;
+            return $this->redirectToRoute('sortie_list');
+
+        }
+
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
@@ -113,6 +122,14 @@ final class UserController extends AbstractController
     //rôle admin défini dans security.yaml
     #[Route('/admin/user_list', name: 'admin_user_list')]
     public function listUsers(Request $request, EntityManagerInterface $em): Response {
+
+
+        if ($this->getUser()->getRoles() != 'ROLE_ADMIN' ) {
+            $this->addFlash('error', 'Désolé cette action n\'est pas autorisée')  ;
+            return $this->redirectToRoute('sortie_list');
+
+        }
+
         $users = $em->getRepository(User::class)->findAll();
 
         return $this->render('user/user_list.html.twig', [
@@ -126,6 +143,13 @@ final class UserController extends AbstractController
         requirements: ['id' => '\d+'],
         methods: 'GET')]
     public function desactiverUser(User $user, EntityManagerInterface $em): Response {
+
+        if ($this->getUser()->getroles() != 'ROLE_ADMIN' ) {
+            $this->addFlash('error', 'Désolé cette action n\'est pas autorisée')  ;
+            return $this->redirectToRoute('sortie_list');
+
+        }
+
         $user->setActif(false);
         $em->flush();
 
@@ -140,6 +164,13 @@ final class UserController extends AbstractController
         requirements: ['id' => '\d+'],
         methods: 'GET')]
     public function activerUser(User $user, EntityManagerInterface $em): Response {
+
+        if ($this->getUser()->getRoles() != 'ROLE_ADMIN' ) {
+            $this->addFlash('error', 'Désolé cette action n\'est pas autorisée')  ;
+            return $this->redirectToRoute('sortie_list');
+
+        }
+
         $user->setActif(true);
         $em->flush();
 
@@ -154,6 +185,14 @@ final class UserController extends AbstractController
         requirements: ['id' => '\d+'],
         methods: 'GET' )]
     public function deleteUser(User $user, EntityManagerInterface $em, Request $request): Response {
+
+
+        if ($this->getUser()->getRoles() != 'ROLE_ADMIN' ) {
+            $this->addFlash('error', 'Désolé cette action n\'est pas autorisée')  ;
+            return $this->redirectToRoute('sortie_list');
+
+        }
+
         if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->get('token')))
         {
             $em->remove($user);
@@ -169,14 +208,20 @@ final class UserController extends AbstractController
             return $this->redirectToRoute('admin_user_list');
     }
 
-    #[Route('/userlist', name: 'app_user_userlist')]
+    #[Route('/admin/userlist', name: 'admin_user_userlist')]
     public function addUsersList(Request $request,UserCSV $CSV) : Response
     {
+
+        if ($this->getUser()->getRoles() != 'ROLE_ADMIN' ) {
+            $this->addFlash('error', 'Désolé cette action n\'est pas autorisée')  ;
+            return $this->redirectToRoute('sortie_list');
+        }
+
         $listusers= $request->files->get("listusers");
 
         $CSV->InsertUsers($listusers);
 
-        return $this->redirectToRoute('sortie_list');
+        return $this->redirectToRoute('admin_user_list');
 
     }
 

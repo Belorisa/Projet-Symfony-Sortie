@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Repository\SortieRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -9,12 +11,13 @@ use Symfony\Component\Routing\Attribute\Route;
 final class MainController extends AbstractController
 {
     #[Route('/', name: 'main')]
-    public function index(): Response
+    public function index(SortieRepository $sortieRepository): Response
     {
-        dump(date_default_timezone_get());
-        dump(new \DateTime());
+
         return $this->render('main/index.html.twig', [
-            'controller_name' => 'MainController',
+            'moments' => $sortieRepository->findSortiesByDate(),
+            'populaires' => $sortieRepository->findSortiesByPopular(),
+
         ]);
     }
 }

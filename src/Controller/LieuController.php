@@ -23,6 +23,9 @@ final class LieuController extends AbstractController
     #[Route('/lieu/new', name: 'app_lieu_new')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
         $lieu = new Lieu();
         $form = $this->createForm(LieuType::class, $lieu);
         $form->handleRequest($request);

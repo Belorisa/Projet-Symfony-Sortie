@@ -35,7 +35,16 @@ class RegistrationFormType extends AbstractType
             ])
             ->add('nom')
             ->add('prenom')
-            ->add('telephone')
+            ->add('telephone', null, [
+                    'label' => 'Téléphone',
+                    'constraints' => [
+                        new NotBlank(),
+                        new Regex([
+                            'pattern' => '/^(?:\+33|0)[1-9](?:[ .-]?\d{2}){4}$/',
+                            'message' => 'Veuillez entrer un numéro de téléphone français valide'
+                        ])
+                    ]
+                ])
             ->add("photo", FileType::class, [
                 'mapped' => false,
                 'required' => false,
