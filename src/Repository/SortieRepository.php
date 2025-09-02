@@ -34,8 +34,10 @@ class SortieRepository extends ServiceEntityRepository
 
 
     //fonction pour récupérer les 3 sorties du moment page accueil
-    public function findSortiesByDate(Datetime $date): array {
+    public function findSortiesByDate(): array {
         return $this->createQueryBuilder('s')
+            ->andWhere('s.dateHeureDebut >= :now')
+            ->setParameter('now', new DateTime())
             ->orderBy('s.dateHeureDebut', 'ASC')
             ->setFirstResult(0)
             ->setMaxResults(3)
@@ -43,15 +45,39 @@ class SortieRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    //fonction pour récupérer les 3 sorties les plus populaires page accueil
-    public function findSeriesByNbParticipants(): array {
-        return $this->createQueryBuilder('s')
-            ->orderBy('s.dateHeureDebut', 'DESC')
-            ->setFirstResult(0)
-            ->setMaxResults(3)
+    //fonction pour récupérer les 3 sorties OUVERTES les plus populaires page accueil
+    public function findSortiesByPopular(): array
+    {
+        $sortiesOuvertes = $this->createQueryBuilder('s')
+            ->andWhere('s.dateHeureDebut >= :now')
+            ->setParameter('now', new DateTime())
+            ->andWhere('s.etat = :etat')
+            ->setParameter('etat', 'OUVERTE')
             ->getQuery()
             ->getResult();
+
+        // calcul des places restantes
+        $places = [];
+        foreach ($sortiesOuvertes as $sortie) {
+            $nbPlacesRestantes = $sortie->getNbInscriptionMax() - count($sortie->getUsers());
+            $places [] = [
+                'sortie' => $sortie,
+                'places_restantes' => $nbPlacesRestantes,
+            ];
+
+            //tri par ordre croissant
+            usort($places, function ($a, $b) {
+                return $a['places_restantes'] - $b['places_restantes'];
+            });
+        }
+        //recuperation des 3 premiers éléments du tableau
+        $result = array_slice($places, 0, 3);
+
+        return $result;
     }
+
+
+
 
     public function findSortie(array $filters,int $nPerPage, int $offset): Paginator
     {

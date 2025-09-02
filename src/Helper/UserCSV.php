@@ -32,6 +32,15 @@ class UserCSV
                 continue;
             }
 
+            //verification si user existe déjà ds BDD
+            $userExist = $this->entityManager
+                ->getRepository(User::class)
+                ->findOneBy(['email' => $email]);
+            if($userExist) {
+                continue; //ignore si l'email existe déjà ds bdd
+            }
+
+
             $campus = $this->entityManager->getRepository(Site::class)->findOneBy(['nom' => $campusName]);
             if (!$campus) {
                 continue; // skip if campus does not exist

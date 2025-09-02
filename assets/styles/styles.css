@@ -457,6 +457,10 @@ h2, h3 {
     color: #0b5edb;
 }
 
+.table-responsive {
+    overflow-x: auto;
+    width: 100%;
+}
 .action_impossible {
     color: #000000;
     background-color: darkgrey;

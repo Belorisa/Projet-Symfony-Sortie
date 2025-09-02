@@ -169,14 +169,14 @@ final class UserController extends AbstractController
             return $this->redirectToRoute('admin_user_list');
     }
 
-    #[Route('/userlist', name: 'app_user_userlist')]
+    #[Route('/admin/userlist', name: 'admin_user_userlist')]
     public function addUsersList(Request $request,UserCSV $CSV) : Response
     {
         $listusers= $request->files->get("listusers");
 
         $CSV->InsertUsers($listusers);
 
-        return $this->redirectToRoute('sortie_list');
+        return $this->redirectToRoute('admin_user_list');
 
     }
 

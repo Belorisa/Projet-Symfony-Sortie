@@ -7,11 +7,42 @@
 
     <!-- affichage des évènements du moment : les 3 ayant la date la plus proche-->
     <h2>Evènements du moment</h2>
-    <!-- boucle for sur la liste des sorties et tri par nb de participants -->
+    <section class="sortie-list">
+        <!-- boucle for sur la liste des sorties et tri par nb de participants -->
+        {% for sortie in moments %}
+            <article class="card">
+                <h4>{{ sortie.nom }}</h4>
+                <span>Site : {{ sortie.site.nom }}</span>
+                <span>Date Début Sortie : {{ sortie.dateHeureDebut|date('d/m/Y') }}</span>
+                <span>Date Fin Inscription : {{ sortie.dateLimiteInscription|date('d/m/Y') }}</span>
+                <span>Nombre de places maximum : {{ sortie.nbInscriptionMax }} </span>
+                <span>Organisateur : {{ sortie.getOrganisateur().nom }} {{ sortie.getOrganisateur().prenom }}</span>
+            </article>
+        {%  endfor %}
+    </section>
 
     <!-- affichage des évènements les plus populaires : les 3 ayant le plus gd nb de participants-->
     <h2>Evènements les plus populaires</h2>
     <!-- boucle for sur la liste des sorties et tri par nb de participants -->
+    <section class="sortie-list">
+        {% for populaire in populaires %}
+            <article class="card">
+                <h4> {{ populaire.sortie.nom }}</h4>
+                <span>Site : {{ populaire.sortie.site.nom }}</span>
+                <span>Date Début Sortie : {{ populaire.sortie.dateHeureDebut|date('d/m/Y') }}</span>
+                <span>Date Fin Inscription : {{ populaire.sortie.dateLimiteInscription|date('d/m/Y') }}</span>
+                <span>Nombre de places maximum : {{ populaire.sortie.nbInscriptionMax }} </span>
+                <span>Nombre de places restantes : {{ populaire.places_restantes }} </span>
+                {% if populaire.sortie.etat == 'OUVERTE' %}
+                <span>SORTIE OUVERTE - INSCRIPTION POSSIBLE ✅</span>
+                {% else %}
+                    <span>INSCRIPTION IMPOSSIBLE ⛔</span>
+                {%  endif %}
+
+                <span>Organisateur : {{ populaire.sortie.getOrganisateur().nom }} {{ populaire.sortie.getOrganisateur().prenom }}</span>
+            </article>
+        {% endfor %}
+    </section>
 
 
 {% endblock %}

@@ -13,8 +13,7 @@ framework:
                 retry_strategy:
                     max_retries: 3
                     multiplier: 2
-                auto_setup: true
-                auto_delete: true
+
             failed: 'doctrine://default?queue_name=failed'
             sync: 'sync://'
 
