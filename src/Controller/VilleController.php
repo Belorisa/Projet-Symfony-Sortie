@@ -17,6 +17,8 @@ final class VilleController extends AbstractController
     #[Route('/ville', name: 'app_ville')]
     public function index(): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
         return $this->render('ville/new.html.twig', [
             'controller_name' => 'VilleController',
         ]);
@@ -25,6 +27,10 @@ final class VilleController extends AbstractController
     #[Route('/ville/nouvelle', name: 'app_ville_nouvelle')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
+
+
         $ville = new Ville();
         $form = $this->createForm(villeType::class, $ville);
         $form->handleRequest($request);

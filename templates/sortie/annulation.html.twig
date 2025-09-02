@@ -8,12 +8,13 @@
 <h1>Annulation d'évènement</h1>
 <br>
 
-<form action="{{ path('sortie_annulation',{id: sortie.id}) }}" name="criteres" method="get">
+    <form action="{{ path('sortie_annulation',{id: sortie.id}) }}" name="criteres" method="get">
 
-    <label for="annul" >Raison de l'annulation</label>
-    <input type="text" id="annul" name="annul">
+        <label for="annul" >Raison de l'annulation</label>
+        <input type="text" id="annul" name="annul">
 
-    <input type="submit">
-</form>
+        <input type="submit">
+    </form>
+
 
 {% endblock %}
