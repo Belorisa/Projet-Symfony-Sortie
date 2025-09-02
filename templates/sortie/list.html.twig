@@ -5,7 +5,7 @@
 {% block body %}
 <h2>Evènements</h2>
     <form action="{{ path('sortie_list') }}" name="criteres" method="get">
-        <label for="site">Site :</label>
+        <label for="site"> 🗺 Site :</label>
         <select name="site" id="site">
             <option value="">-- Tous les sites --</option>
             {% for site in sites %}
@@ -15,19 +15,19 @@
         <label for="contents">Le nom de la sortie contient :</label>
         <input type="text" name="contents" id="contents">
         <div>
-            <label >Filtres :</label>
-            <label for="orga">Sortie dont je suis l'organisateur/trice</label>
+            <label >🔍 FILTRES :</label>
+            <label for="orga">Sorties dont je suis l'organisateur/trice</label>
             <input type="checkbox" id="orga" name="orga" value="orga">
-            <label for="inscrit">Sortie auxquelles je suis inscrit/e</label>
+            <label for="inscrit">Sorties auxquelles je suis inscrit(e)</label>
             <input type="checkbox" id="inscrit" name="inscrit" value="inscrit">
-            <label for="pasinscrit">Sortie auxquelles je ne suis pas inscrit/e</label>
+            <label for="pasinscrit">Sorties auxquelles je ne suis pas inscrit(e)</label>
             <input type="checkbox" id="pasinscrit" name="pasinscrit" value="pasinscrit">
-            <label for="passe">Sortie passées</label>
+            <label for="passe">Sorties passées</label>
             <input type="checkbox" id="passe" name="passe" value="passe">
             <div>
-                <label for="apres">Après le : </label>
+                <label for="apres">📆 Après le : </label>
                 <input type="date" name="apres" id="apres">
-                <label for="avant">Avant le : </label>
+                <label for="avant"> 📆 Avant le : </label>
                 <input type="date" name="avant" id="avant">
             </div>
         </div>
@@ -40,7 +40,7 @@
     <section class="sortie-list">
         {%  for sortie in sorties %}
         <a href="{{ path('sortie_detail', {id : sortie.id }) }}">
-            {% if sortie.etat != 'ANNULER' %}
+            {% if sortie.etat != 'ANNULEE' %}
             <article class="card">
             <h4>{{ sortie.nom }}</h4>
             <span>Site : {{ sortie.site.nom }}</span>
@@ -50,7 +50,7 @@
             <span>Organisateur : {{ sortie.getOrganisateur().nom }} {{ sortie.getOrganisateur().prenom }}</span>
             </article>
             {% endif %}
-            {% if sortie.etat == "ANNULER" %}
+            {% if sortie.etat == "ANNULEE" %}
                 <article class="card">
                     <h4>{{ sortie.nom }}</h4>
                     <span>Site : {{ sortie.site.nom }}</span>

@@ -27,15 +27,15 @@ class UpdateSortie extends Command
         $sorties = $this->sortieRepository->findAll();
 
         foreach ($sorties as $sortie) {
-            if($sortie->getEtat()!='ANNULER')
+            if($sortie->getEtat()!='ANNULEE')
             {
-                $output->writeln("Les sortie détecté");
+                $output->writeln("Sorties détectées");
                 if($sortie->getDateHeureDebut() <= $now && $sortie->getDateHeureFin() >= $now){
                     $sortie->setEtat('EN COURS');
                 }
                 elseif ($sortie->getDateHeureFin() < $now)
                 {
-                    $sortie->setEtat('PASSE');
+                    $sortie->setEtat('PASSEE');
                 }
 
             }
@@ -43,7 +43,7 @@ class UpdateSortie extends Command
         }
 
         $this->entityManager->flush();
-        $output->writeln("Les sortie on été mise a jour");
+        $output->writeln("Les sorties ont été mises à jour");
 
 
         return Command::SUCCESS;
