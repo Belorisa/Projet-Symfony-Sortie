@@ -123,8 +123,7 @@ final class UserController extends AbstractController
     #[Route('/admin/user_list', name: 'admin_user_list')]
     public function listUsers(Request $request, EntityManagerInterface $em): Response {
 
-
-        if ($this->getUser()->getRoles() != 'ROLE_ADMIN' ) {
+        if (!$this->isGranted('ROLE_ADMIN' )) {
             $this->addFlash('error', 'Désolé cette action n\'est pas autorisée')  ;
             return $this->redirectToRoute('sortie_list');
 
@@ -144,7 +143,7 @@ final class UserController extends AbstractController
         methods: 'GET')]
     public function desactiverUser(User $user, EntityManagerInterface $em): Response {
 
-        if ($this->getUser()->getroles() != 'ROLE_ADMIN' ) {
+        if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('error', 'Désolé cette action n\'est pas autorisée')  ;
             return $this->redirectToRoute('sortie_list');
 
@@ -164,9 +163,8 @@ final class UserController extends AbstractController
         requirements: ['id' => '\d+'],
         methods: 'GET')]
     public function activerUser(User $user, EntityManagerInterface $em): Response {
-
-        if ($this->getUser()->getRoles() != 'ROLE_ADMIN' ) {
-            $this->addFlash('error', 'Désolé cette action n\'est pas autorisée')  ;
+        if (!$this->isGranted("ROLE_ADMIN")) {
+            $this->addFlash('error', 'Désolé, cette action n\'est pas autorisée')  ;
             return $this->redirectToRoute('sortie_list');
 
         }
@@ -187,8 +185,8 @@ final class UserController extends AbstractController
     public function deleteUser(User $user, EntityManagerInterface $em, Request $request): Response {
 
 
-        if ($this->getUser()->getRoles() != 'ROLE_ADMIN' ) {
-            $this->addFlash('error', 'Désolé cette action n\'est pas autorisée')  ;
+        if (!$this->isGranted( 'ROLE_ADMIN')) {
+            $this->addFlash('error', 'Désolé, cette action n\'est pas autorisée')  ;
             return $this->redirectToRoute('sortie_list');
 
         }
@@ -212,7 +210,7 @@ final class UserController extends AbstractController
     public function addUsersList(Request $request,UserCSV $CSV) : Response
     {
 
-        if ($this->getUser()->getRoles() != 'ROLE_ADMIN' ) {
+        if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('error', 'Désolé cette action n\'est pas autorisée')  ;
             return $this->redirectToRoute('sortie_list');
         }

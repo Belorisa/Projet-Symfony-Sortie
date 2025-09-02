@@ -31,24 +31,24 @@
                 {% endif %}
 
                 {% if isModified == true %}
-                    {{ form_row(user_form.submit) }}
-                    {{ form_end(user_form,{render_rest: false}) }}
-                {% endif %}
-
-                {% if isModified == false and app.user.id == user.id or is_granted('ROLE_ADMIN')  %}
                     <div class="btn-position">
-                        <button type="button" class="btn"> <a href="{{ path('app_user_update',{id: user.id}) }}"> Modifier </a> </button>
+                        {{ form_row(user_form.submit) }}
                     </div>
                     {{ form_end(user_form,{render_rest: false}) }}
                 {% endif %}
 
+                {% if isModified == false and (app.user.id == user.id or is_granted('ROLE_ADMIN'))  %}
+                    <div class="btn-position">
+                        <button type="button" class="btn btn-option"> <a href="{{ path('app_user_update',{id: user.id}) }}"> Modifier </a> </button>
+                    </div>
+                    {{ form_end(user_form,{render_rest: false}) }}
+                {% endif %}
 
                 {% if is_granted('IS_AUTHENTICATED') and is_granted('ROLE_ADMIN') %}
                     <div class="btn-position">
                         <button type="button" class="btn btn-option"> <a href="{{ path('admin_user_list') }}"> <strong> GESTION DES UTILISATEURS </strong></a> </button>
                     </div>
                 {% endif %}
-
             </div>
         </div>
     </section>

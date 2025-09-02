@@ -102,7 +102,7 @@ final class SortieController extends AbstractController
             $em->persist($sortie);
             $em->flush();
 
-            $this->addFlash('success', 'l\'activité à bien été crée');
+            $this->addFlash('success', 'l\'activité a bien été créée');
             return $this->redirectToRoute('sortie_list');
         }
         else{
@@ -166,7 +166,7 @@ final class SortieController extends AbstractController
             $email = (new Email())
                 ->from('no-reply@sortie.fr')
                 ->to($user->getEmail())
-                ->subject('Confirmation d\'inscription a une sortie')
+                ->subject('Confirmation d\'inscription à une sortie')
                 ->html($this->renderView('emails/inscription.html.twig', [
                     'user' => $user,
                     'sortie' => $sortie,
@@ -185,7 +185,7 @@ final class SortieController extends AbstractController
 
             $em->persist($sortie);
             $em->flush();
-            $this->addFlash('success', 'Vous êtes bien inscrit');
+            $this->addFlash('success', 'L\'inscription a bien été prise en compte');
         }
 
         return $this->redirectToRoute('sortie_detail', [
@@ -204,8 +204,8 @@ final class SortieController extends AbstractController
             $email = (new Email())
                 ->from('no-reply@sortie.fr')
                 ->to($user->getEmail())
-                ->subject('Confirmation de déinscription a une sortie')
-                ->html($this->renderView('emails/déinscription.html.twig', [
+                ->subject('Confirmation de désinscription a une sortie')
+                ->html($this->renderView('emails/désinscription.html.twig', [
                     'user' => $user,
                     'sortie' => $sortie,
                 ]));
@@ -215,12 +215,12 @@ final class SortieController extends AbstractController
             $sortie->removeUser($user);
             $em->persist($sortie);
             $em->flush();
-            $this->addFlash('success', 'Vous êtes bien déinscrit');
+            $this->addFlash('success', 'Vous êtes bien désinscrit');
             return $this->redirectToRoute('sortie_detail', [
                 'id' => $sortie->getId(),
             ]);
         }
-        $this->addFlash('error', 'Cette action ne peut être effectué');
+        $this->addFlash('error', 'Cette action ne peut être effectuée');
         return $this->redirectToRoute('sortie_detail', [
             'id' => $sortie->getId(),
         ]);
@@ -235,7 +235,7 @@ final class SortieController extends AbstractController
 
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
 
-        if ($this->getUser()->getId() != $sortie->getOrganisateur()->getId() || $this->getUser()->getRoles() == "ROLE_ADMIN" ) {
+        if ($this->getUser()->getId() != $sortie->getOrganisateur()->getId() && !$this->isGranted( 'ROLE_ADMIN')) {
             return $this->redirectToRoute('sortie_list');
         }
 
@@ -253,7 +253,7 @@ final class SortieController extends AbstractController
             $em->persist($sortie);
             $em->flush();
 
-            $this->addFlash('success', 'L\'activité à bien été crée');
+            $this->addFlash('success', 'l\'activité a été modifiée avec succès');
             return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
         }
 
@@ -266,9 +266,8 @@ final class SortieController extends AbstractController
     public function sortieAnnuler(Sortie $sortie, EntityManagerInterface $em,Request $request): Response
     {
 
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
 
-        if ($this->getUser()->getId() != $sortie->getOrganisateur()->getId() || $this->getUser()->getRoles() == "ROLE_ADMIN" ) {
+        if ($this->getUser()->getId() != $sortie->getOrganisateur()->getId() && !$this->isGranted( 'ROLE_ADMIN')) {
                 return $this->redirectToRoute('sortie_list');
         }
 
@@ -276,10 +275,9 @@ final class SortieController extends AbstractController
 
         if($annul)
         {
-
             dump($annul);
             $sortie->setInfoSortie($annul);
-            $sortie->setEtat("ANNULER");
+            $sortie->setEtat("ANNULEE");
 
             $em->persist($sortie);
             $em->flush();
