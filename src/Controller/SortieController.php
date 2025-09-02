@@ -221,7 +221,7 @@ final class SortieController extends AbstractController
             $em->persist($sortie);
             $em->flush();
 
-            $this->addFlash('success', 'l\'activité à bien été crée');
+            $this->addFlash('success', 'L\'activité à bien été crée');
             return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
         }
 
