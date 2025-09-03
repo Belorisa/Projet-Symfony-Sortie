@@ -24,10 +24,19 @@ class SortieRepository extends ServiceEntityRepository
         $qB = $this->createQueryBuilder('s')
             ->orderBy('s.dateHeureDebut', 'ASC')
             ->setFirstResult($offset)
-            ->setMaxResults($nPerPage)
-            ->getQuery();
+            ->setMaxResults($nPerPage);
 
-            return new Paginator($qB);
+            return new Paginator($qB,true);
+    }
+
+    public function countUserForSortie(int $sortieId): int {
+        return $this->createQueryBuilder('s')
+            ->select('COUNT(u)')
+            ->join('s.users', 'u')
+            ->where('s.id = :id')
+            ->setParameter('id', $sortieId)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     //fonction pour retourner les sorties par campus
@@ -49,31 +58,36 @@ class SortieRepository extends ServiceEntityRepository
     public function findSortiesByPopular(): array
     {
         $sortiesOuvertes = $this->createQueryBuilder('s')
+            ->leftJoin('s.users', 'u')
+            ->addSelect('count(u) as HIDDEN nbUsers')
             ->andWhere('s.dateHeureDebut >= :now')
-            ->setParameter('now', new DateTime())
             ->andWhere('s.etat = :etat')
-            ->setParameter('etat', 'OUVERTE')
-            ->getQuery()
-            ->getResult();
+            ->groupBy('s.id')
+            ->orderBy('nbUsers', 'ASC')
+            ->setMaxResults(3)
+            ->setParameter('now', new \DateTime())
+            ->setParameter('etat', 'OUVERTE');
+            return $sortiesOuvertes->getQuery()->getResult();
 
-        // calcul des places restantes
-        $places = [];
-        foreach ($sortiesOuvertes as $sortie) {
-            $nbPlacesRestantes = $sortie->getNbInscriptionMax() - count($sortie->getUsers());
-            $places [] = [
-                'sortie' => $sortie,
-                'places_restantes' => $nbPlacesRestantes,
-            ];
 
-            //tri par ordre croissant
-            usort($places, function ($a, $b) {
-                return $a['places_restantes'] - $b['places_restantes'];
-            });
-        }
-        //recuperation des 3 premiers éléments du tableau
-        $result = array_slice($places, 0, 3);
-
-        return $result;
+//        // calcul des places restantes
+//        $places = [];
+//        foreach ($sortiesOuvertes as $sortie) {
+//            $nbPlacesRestantes = $sortie->getNbInscriptionMax() - count($sortie->getUsers());
+//            $places [] = [
+//                'sortie' => $sortie,
+//                'places_restantes' => $nbPlacesRestantes,
+//            ];
+//
+//            //tri par ordre croissant
+//            usort($places, function ($a, $b) {
+//                return $a['places_restantes'] - $b['places_restantes'];
+//            });
+//        }
+//        //recuperation des 3 premiers éléments du tableau
+//        $result = array_slice($places, 0, 3);
+//
+//        return $result;
     }
 
 
@@ -104,14 +118,15 @@ class SortieRepository extends ServiceEntityRepository
 
         // Filter: user is registered in the sortie
         if (!empty($filters['inscrit']) && $user) {
-            $qB->andWhere(':user MEMBER OF s.participants')
+            $qB ->innerJoin('s.users', 'uInscrit')
+                ->andWhere('uInscrit = :user')
                 ->setParameter('user', $user);
         }
 
         // Filter: past or future events
         $now = new \DateTime();
 
-        $minDate = (new \DateTime())->modify('-1 month')->setTime(0, 0);
+        $minDate = ($now->modify('-1 month')->setTime(0, 0));
         $qB->andWhere('s.dateHeureDebut >= :minDate')
             ->setParameter('minDate', $minDate);
 
@@ -133,78 +148,20 @@ class SortieRepository extends ServiceEntityRepository
 
         $qB->setParameter('now', $now);
 
-        return new Paginator($qB);
+        return new Paginator($qB,true);
     }
 
-    public function countFiltered(array $filters): int
+
+    public function findDetail(int $id): ?Sortie
     {
-        $qB = $this->createQueryBuilder('s')
-            ->select('COUNT(s.id)');
-        if (!empty($filters['site'])) {
-            $qB->andWhere('s.site = :site')
-                ->setParameter('site', $filters['site']);
-        }
-        if (!empty($filters['contents'])) {
-            $qB->andWhere('s.nom LIKE :contents')
-                ->setParameter('contents', '%' . $filters['contents'] . '%');
-        }
-
-        $user = $filters['user'] ?? null;
-
-        // Filter: user is the organizer
-        if (!empty($filters['orga']) && $user) {
-            $qB->andWhere('s.organisateur = :user')
-                ->setParameter('user', $user);
-        }
-
-        // Filter: user is registered in the sortie
-        if (!empty($filters['inscrit']) && $user) {
-            $qB->andWhere(':user MEMBER OF s.participants')
-                ->setParameter('user', $user);
-        }
-
-        // Filter: past or future events
-        $now = new \DateTime();
-
-        $minDate = (new \DateTime())->modify('-1 month')->setTime(0, 0);
-        $qB->andWhere('s.dateHeureDebut >= :minDate')
-            ->setParameter('minDate', $minDate);
-
-        if (!empty($filters['passe'])) {
-            $qB->andWhere('s.dateHeureDebut < :now');
-        } else {
-            $qB->andWhere('s.dateHeureDebut >= :now');
-        }
-
-        if (!empty($filters['apres']) && $filters['apres'] >= $minDate) {
-            $qB->andWhere('s.dateHeureDebut >= :apres')
-                ->setParameter('apres', $filters['apres']);
-        }
-
-        if (!empty($filters['avant'])) {
-            $qB->andWhere('s.dateHeureDebut <= :avant')
-                ->setParameter('avant', $filters['avant']);
-        }
-
-        $qB->setParameter('now', $now);
-
-        return (int) $qB->getQuery()->getSingleScalarResult();
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.users', 'u')->addSelect('u')
+            ->leftJoin('s.organisateur', 'o')->addSelect('o')
+            ->where('s.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
-
-
-    public function countAll(): int
-    {
-        $qB = $this->createQueryBuilder('s')
-            ->select('COUNT(s.id)');
-
-        $minDate = (new \DateTime())->modify('-1 month');
-        $qB->andWhere('s.dateHeureDebut >= :minDate')
-            ->setParameter('minDate', $minDate);
-
-        return (int) $qB->getQuery()->getSingleScalarResult();
-    }
-
-
 
     
     //    /**

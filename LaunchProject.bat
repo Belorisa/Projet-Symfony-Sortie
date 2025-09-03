@@ -27,7 +27,9 @@ echo Vérification du worker Messenger...
 tasklist /FI "WINDOWTITLE eq Messenger Worker*" | find /I "Messenger Worker" >nul
 if errorlevel 1 (
     echo Worker non trouvé, lancement...
-    start "Messenger Worker" cmd /k "%PHP_PATH% %CONSOLE% messenger:consume async"
+    start "Messenger Worker" cmd /k ":loop
+%PHP_PATH% %CONSOLE% messenger:consume async --time-limit=3600 --memory-limit=128M --limit=50
+goto loop"
 ) else (
     echo Worker déjà en cours d'exécution.
 )
