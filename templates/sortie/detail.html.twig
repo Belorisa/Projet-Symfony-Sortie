@@ -43,13 +43,13 @@
     {% endif %}
 
 <div class="btn-position">
-        {% if app.user not in listUsers and sortie.dateLimiteInscription > "now" and sortie.etat == "OUVERTE" %}
+        {% if app.user not in sortie.users and sortie.dateLimiteInscription > "now" and sortie.etat == "OUVERTE" %}
             <button type="button" class="btn btn-option">
                 <a href="{{ path('sortie_inscription',{id: sortie.id}) }}">S'inscrire</a>
             </button>
         {% endif %}
 
-        {% if app.user in listUsers and sortie.etat == "OUVERTE" %}
+        {% if app.user in sortie.users and sortie.etat == "OUVERTE" %}
             <button type="button" class="btn btn-option">
                 <a href="{{ path('sortie_deinscription',{id: sortie.id}) }}">Se désinscrire</a>
             </button>

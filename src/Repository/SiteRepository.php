@@ -25,6 +25,14 @@ class SiteRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function FindAllNameId(): array
+    {
+        return $this->createQueryBuilder('s')
+            ->select('s.nom', 's.id')
+            ->getQuery()
+            ->getArrayResult();
+    }
     //    /**
     //     * @return Site[] Returns an array of Site objects
     //     */

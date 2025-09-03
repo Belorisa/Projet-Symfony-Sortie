@@ -27,19 +27,18 @@
     <section class="sortie-list">
         {% for populaire in populaires %}
             <article class="card">
-                <h4> {{ populaire.sortie.nom }}</h4>
-                <span>Site : {{ populaire.sortie.site.nom }}</span>
-                <span>Date Début Sortie : {{ populaire.sortie.dateHeureDebut|date('d/m/Y') }}</span>
-                <span>Date Fin Inscription : {{ populaire.sortie.dateLimiteInscription|date('d/m/Y') }}</span>
-                <span>Nombre de places maximum : {{ populaire.sortie.nbInscriptionMax }} </span>
-                <span>Nombre de places restantes : {{ populaire.places_restantes }} </span>
-                {% if populaire.sortie.etat == 'OUVERTE' %}
+                <h4> {{ populaire.nom }}</h4>
+                <span>Site : {{ populaire.site.nom }}</span>
+                <span>Date Début Sortie : {{ populaire.dateHeureDebut|date('d/m/Y') }}</span>
+                <span>Date Fin Inscription : {{ populaire.dateLimiteInscription|date('d/m/Y') }}</span>
+                <span>Nombre de places maximum : {{ populaire.nbInscriptionMax }} </span>
+                {% if populaire.etat == 'OUVERTE' %}
                 <span>OUVERTE - INSCRIPTION POSSIBLE ✅</span>
                 {% else %}
                     <span>INSCRIPTION IMPOSSIBLE ⛔</span>
                 {%  endif %}
 
-                <span>Organisateur : {{ populaire.sortie.getOrganisateur().nom }} {{ populaire.sortie.getOrganisateur().prenom }}</span>
+                <span>Organisateur : {{ populaire.getOrganisateur().nom }} {{ populaire.getOrganisateur().prenom }}</span>
             </article>
         {% endfor %}
     </section>
