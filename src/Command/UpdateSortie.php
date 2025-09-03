@@ -37,6 +37,10 @@ class UpdateSortie extends Command
                 {
                     $sortie->setEtat('PASSEE');
                 }
+                elseif ($sortie->getDateLimiteInscription() < $now)
+                {
+                    $sortie->setEtat('CLOTUREE');
+                }
 
             }
 
