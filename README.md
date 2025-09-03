@@ -51,6 +51,7 @@ composer install
 ```
 
 ### 3. Configuration des variables d'environnement :
+Il vous faudra également mettre à votre fuseau horaire la variable "date.timezone" de votre fichier php.ini situer dans le bin liée a votre projet, ainsi que les ligne suivantes dans votre environemment de dévelopemment
 ```bash
 DATABASE_URL="mysql://db_user:db_password@127.0.0.1:3306/sortie_db"(adresse de votre DB local)
 MAILER_DSN="smtp://username:password@smtp.mailtrap.io:2525"(si vous utiliser mailHog)
@@ -67,6 +68,18 @@ symfony console doctrine:migrations:migrate
 ```bash
 symfony serve(depuis un invite de commande executer dans le dossier du projet )
 ```
+### 6.Ou executer via le LaunchProject.bat
+Le repo contient un fichier bat qui permet d'executer l'ensemble des fonctions du projet.
+Pour cela il vous suffit d'ouvrir le bat et modifier les informations qui vous sont
+spécifiques. Il vous faudra lancer le MailHog manuellement mais la création d'une tâche de mise a jour des sortie est crée via le .bat,
+elle s'execute toute les heures et est trouvable dans le planificateur de tâche de Window
+
+```bash
+set PROJECT_PATH=D:\ProjetSymfony7.3\projetSymfonySortie
+set PHP_PATH=C:\wamp64\bin\php\php8.3.14\php.exe
+set SYMFONY_PATH=C:\wamp64\bin\php\php8.3.14\symfony.exe
+```
+
 
 ## Utilisation
 
