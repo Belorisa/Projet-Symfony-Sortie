@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Site;
 use App\Entity\Sortie;
 use App\Form\SortieType;
+use App\Helper\SendingMail;
 use App\Message\ReminderMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\SortieRepository;
@@ -34,8 +35,7 @@ final class SortieController extends AbstractController
         $offset = ($page - 1) * $nbPerPage;
 
         $list = $em->getRepository(Site::class)->FindAllNameId();
-        $paginator = $sortieRepository->findAllSorties($nbPerPage, $offset);
-        $sorties = iterator_to_array($paginator);
+
 
         $orga = $request->query->get("orga");
         $site = $request->query->get("site");
@@ -47,7 +47,6 @@ final class SortieController extends AbstractController
         $apres = $request->query->get("apres");
         $user = $this->getUser();
 
-        $total = count($paginator);
 
         if($orga || $apres|| $avant|| $site || $contents || $inscrit || $pasinscrit || $passe){
             $filters = [
@@ -61,10 +60,14 @@ final class SortieController extends AbstractController
                 'avant' => $avant ? new \DateTime($avant) : null,
                 'apres' => $apres ? new \DateTime($apres) : null,
             ];
-            $sorties = $sortieRepository->findSortie($filters, $nbPerPage, $offset);
-            $total = count($paginator);
+            $paginator = $sortieRepository->findSortie($filters, $nbPerPage, $offset);
+        }
+        else{
+            $paginator = $sortieRepository->findAllSorties($nbPerPage, $offset);
         }
 
+        $sorties = iterator_to_array($paginator);
+        $total = $paginator->count();
 
 
         $totalPages = ceil($total/$nbPerPage);
@@ -137,14 +140,14 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/inscription/{id}', name: '_inscription')]
-    public function sortieInscription(int $id,EntityManagerInterface $em,MailerInterface $mailer,MessageBusInterface $bus,SortieRepository $sortieRepository): Response
+    public function sortieInscription(int $id,EntityManagerInterface $em,SendingMail $sendingMail,MessageBusInterface $bus,SortieRepository $sortieRepository): Response
     {
 
         $sortie = $sortieRepository->findDetail($id);
         $userCount = $sortieRepository->countUserForSortie($id);
 
         $placeRestante = $sortie->getNbInscriptionMax() -$userCount;
-
+        $now = new \DateTime();
 
 
         if ($sortie->getEtat() == "CLOTUREE"){
@@ -153,23 +156,19 @@ final class SortieController extends AbstractController
         }
 
         $user = $this->getUser();
-        if($sortie->getEtat()=="OUVERTE" && $sortie->getDateLimiteInscription()>new \DateTime())
+        if($sortie->getEtat()=="OUVERTE" && $sortie->getDateLimiteInscription()>$now)
         {
             $sortie->addUser($user);
 
-            $email = (new Email())
-                ->from('no-reply@sortie.fr')
-                ->to($user->getEmail())
-                ->subject('Confirmation d\'inscription à une sortie')
-                ->html($this->renderView('emails/inscription.html.twig', [
-                    'user' => $user,
-                    'sortie' => $sortie,
-                ]));
-
-            $mailer->send($email);
+            $sendingMail->send(
+                $user->getEmail(),
+                "Confirmation d'inscription à une sortie",
+                'emails/inscription.html.twig',
+                ['user'=>$user,'sortie'=>$sortie]
+            );
 
             $eventStart = $sortie->getDateHeureDebut();
-            $delayInSeconds = $eventStart->getTimestamp() - (new \DateTime())->getTimestamp() - (48*3600);
+            $delayInSeconds = $eventStart->getTimestamp() - ($now)->getTimestamp() - (48*3600);
             $delayInMs = max(0,$delayInSeconds*1000);
 
             $bus->dispatch(new ReminderMessage($sortie->getId(),$user->getId()),
@@ -190,23 +189,19 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/deinscription/{id}', name: '_deinscription')]
-    public function sortieDeinscription(Sortie $sortie,EntityManagerInterface $em,MailerInterface $mailer): Response
+    public function sortieDeinscription(Sortie $sortie,EntityManagerInterface $em,SendingMail $sendingMail): Response
     {
 
 
         $user = $this->getUser();
         if($sortie->getEtat()!="EN COURS" && $sortie->getDateLimiteInscription()>new \DateTime())
         {
-            $email = (new Email())
-                ->from('no-reply@sortie.fr')
-                ->to($user->getEmail())
-                ->subject('Confirmation de désinscription a une sortie')
-                ->html($this->renderView('emails/désinscription.html.twig', [
-                    'user' => $user,
-                    'sortie' => $sortie,
-                ]));
-
-            $mailer->send($email);
+            $sendingMail->send(
+                $user->getEmail(),
+                "Confirmation de désinscription à une sortie",
+                'emails/désinscription.html.twig',
+                ['user'=>$user,'sortie'=>$sortie]
+            );
 
             $sortie->removeUser($user);
             $em->flush();
@@ -267,14 +262,14 @@ final class SortieController extends AbstractController
 
         $annul = $request->query->get("annul");
 
-        if($annul)
+        if(!empty($annul))
         {
             dump($annul);
             $sortie->setInfoSortie($annul);
             $sortie->setEtat("ANNULEE");
 
             $em->flush();
-            $this->redirectToRoute('sortie_list');
+            return $this->redirectToRoute('sortie_list');
         }
 
         return $this->render('sortie/annulation.html.twig', [
