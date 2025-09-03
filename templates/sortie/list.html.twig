@@ -37,8 +37,9 @@
     <!--gestion des pages si plus de 10 évènements-->
     <h3> Liste des évènements publiés : </h3>
 
-    <section class="sortie-list">
+    <section class="sortie-list" >
         {%  for sortie in sorties %}
+
         <a href="{{ path('sortie_detail', {id : sortie.id }) }}">
             {% if sortie.etat != 'ANNULEE' %}
             <article class="card">
@@ -51,7 +52,7 @@
             </article>
             {% endif %}
             {% if sortie.etat == "ANNULEE" %}
-                <article class="card">
+                <article class="card" style="background-image: url('{{ asset('images/143294d0-c748-44a6-b2cd-205d54a8a469.jpg') }}')">
                     <h4>{{ sortie.nom }}</h4>
                     <span>Site : {{ sortie.site.nom }}</span>
                     <span> {{ sortie.etat }} </span>
