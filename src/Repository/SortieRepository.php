@@ -22,6 +22,9 @@ class SortieRepository extends ServiceEntityRepository
 
     public function findAllSorties(int $nPerPage, int $offset): Paginator {
         $qB = $this->createQueryBuilder('s')
+            ->leftJoin('s.organisateur', 'o')->addSelect('o')
+            ->leftJoin('s.users', 'u')->addSelect('u')
+            ->leftJoin('s.site', 'site')->addSelect('site')
             ->orderBy('s.dateHeureDebut', 'ASC')
             ->setFirstResult($offset)
             ->setMaxResults($nPerPage);
@@ -46,6 +49,7 @@ class SortieRepository extends ServiceEntityRepository
     public function findSortiesByDate(): array {
         return $this->createQueryBuilder('s')
             ->andWhere('s.dateHeureDebut >= :now')
+            ->andWhere('s.etat = \'OUVERTE\'')
             ->setParameter('now', new DateTime())
             ->orderBy('s.dateHeureDebut', 'ASC')
             ->setFirstResult(0)
@@ -59,7 +63,7 @@ class SortieRepository extends ServiceEntityRepository
     {
         $sortiesOuvertes = $this->createQueryBuilder('s')
             ->leftJoin('s.users', 'u')
-            ->addSelect('count(u) as HIDDEN nbUsers')
+            ->addSelect('count(u) AS HIDDEN nbUsers')
             ->andWhere('s.dateHeureDebut >= :now')
             ->andWhere('s.etat = :etat')
             ->groupBy('s.id')
@@ -67,27 +71,22 @@ class SortieRepository extends ServiceEntityRepository
             ->setMaxResults(3)
             ->setParameter('now', new \DateTime())
             ->setParameter('etat', 'OUVERTE');
-            return $sortiesOuvertes->getQuery()->getResult();
+
+        $results = $sortiesOuvertes->getQuery()->getResult();
+
+        $sortiesWithInfo = [];
+        foreach ($results as $sortie) {
+            $nbUsers = count($sortie->getUsers());
+            $sortiesWithInfo[] = [
+                'sortie' => $sortie,
+                'nbUsers' => $nbUsers,
+                'placesRestantes' => $sortie->getNbInscriptionMax() - $nbUsers,
+            ];
+        }
+
+        return $sortiesWithInfo;
 
 
-//        // calcul des places restantes
-//        $places = [];
-//        foreach ($sortiesOuvertes as $sortie) {
-//            $nbPlacesRestantes = $sortie->getNbInscriptionMax() - count($sortie->getUsers());
-//            $places [] = [
-//                'sortie' => $sortie,
-//                'places_restantes' => $nbPlacesRestantes,
-//            ];
-//
-//            //tri par ordre croissant
-//            usort($places, function ($a, $b) {
-//                return $a['places_restantes'] - $b['places_restantes'];
-//            });
-//        }
-//        //recuperation des 3 premiers éléments du tableau
-//        $result = array_slice($places, 0, 3);
-//
-//        return $result;
     }
 
 
@@ -126,7 +125,7 @@ class SortieRepository extends ServiceEntityRepository
         // Filter: past or future events
         $now = new \DateTime();
 
-        $minDate = ($now->modify('-1 month')->setTime(0, 0));
+        $minDate = ((clone $now)->modify('-1 month')->setTime(0, 0));
         $qB->andWhere('s.dateHeureDebut >= :minDate')
             ->setParameter('minDate', $minDate);
 
