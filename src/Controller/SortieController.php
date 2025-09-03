@@ -8,6 +8,7 @@ use App\Form\SortieType;
 use App\Message\ReminderMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\SortieRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,8 +33,9 @@ final class SortieController extends AbstractController
         $nbPerPage = $parameters->get('sortie')['nb_max'];
         $offset = ($page - 1) * $nbPerPage;
 
-        $list = $em->getRepository(Site::class)->findAll();
-        $sorties = $sortieRepository->findAllSorties($nbPerPage, $offset);
+        $list = $em->getRepository(Site::class)->FindAllNameId();
+        $paginator = $sortieRepository->findAllSorties($nbPerPage, $offset);
+        $sorties = iterator_to_array($paginator);
 
         $orga = $request->query->get("orga");
         $site = $request->query->get("site");
@@ -45,7 +47,7 @@ final class SortieController extends AbstractController
         $apres = $request->query->get("apres");
         $user = $this->getUser();
 
-        $total = $sortieRepository->countAll();
+        $total = count($paginator);
 
         if($orga || $apres|| $avant|| $site || $contents || $inscrit || $pasinscrit || $passe){
             $filters = [
@@ -60,7 +62,7 @@ final class SortieController extends AbstractController
                 'apres' => $apres ? new \DateTime($apres) : null,
             ];
             $sorties = $sortieRepository->findSortie($filters, $nbPerPage, $offset);
-            $total = $sortieRepository->countFiltered($filters);
+            $total = count($paginator);
         }
 
 
@@ -112,13 +114,14 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/detail/{id}', name: '_detail')]
-    public function sortieDetail(Sortie $sortie ): Response
+    public function sortieDetail(int $id,SortieRepository $sortieRepository ): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
 
+        $sortie = $sortieRepository->findDetail($id);
+        $userCount = $sortieRepository->countUserForSortie($id);
 
-        $listUsers = $sortie->getUsers();
-        $placeRestante = $sortie->getNbInscriptionMax() - count($listUsers);
+        $placeRestante = $sortie->getNbInscriptionMax() -$userCount;
 
         if (!$sortie->getOrganisateur()) {
             $this->addFlash('error', 'Cette sortie n’a pas d’organisateur défini.');
@@ -128,27 +131,23 @@ final class SortieController extends AbstractController
 
         return $this->render('sortie/detail.html.twig', [
             'sortie' => $sortie,
-            'listUsers' => $listUsers,
             'placeRestante' => $placeRestante,
 
         ]);
     }
 
     #[Route('/inscription/{id}', name: '_inscription')]
-    public function sortieInscription(Sortie $sortie,EntityManagerInterface $em,MailerInterface $mailer,MessageBusInterface $bus): Response
+    public function sortieInscription(int $id,EntityManagerInterface $em,MailerInterface $mailer,MessageBusInterface $bus,SortieRepository $sortieRepository): Response
     {
 
-        $listUsers = $sortie->getUsers();
-        $placeRestante = $sortie->getNbInscriptionMax() - count($listUsers);
+        $sortie = $sortieRepository->findDetail($id);
+        $userCount = $sortieRepository->countUserForSortie($id);
+
+        $placeRestante = $sortie->getNbInscriptionMax() -$userCount;
 
 
-        if($placeRestante == 1 && $sortie->getEtat() != "CLOTUREE")
-        {
-            $sortie->setEtat("CLOTUREE");
-            $em->persist($sortie);
-            $em->flush();
-        }
-        else{
+
+        if ($sortie->getEtat() == "CLOTUREE"){
             $this->addFlash('error','Désolé cette sortie est complète');
             return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
         }
@@ -177,8 +176,10 @@ final class SortieController extends AbstractController
             [
                 new DelayStamp($delayInMs)
             ]);
-
-            $em->persist($sortie);
+            if($placeRestante == 1)
+            {
+                $sortie->setEtat("CLOTUREE");
+            }
             $em->flush();
             $this->addFlash('success', 'L\'inscription a bien été prise en compte');
         }
@@ -208,7 +209,6 @@ final class SortieController extends AbstractController
             $mailer->send($email);
 
             $sortie->removeUser($user);
-            $em->persist($sortie);
             $em->flush();
             $this->addFlash('success', 'Vous êtes bien désinscrit');
             return $this->redirectToRoute('sortie_detail', [
@@ -245,7 +245,6 @@ final class SortieController extends AbstractController
             $sortie->setOrganisateur($user);
             $sortie->setEtat($sortie->getEtat());
 
-            $em->persist($sortie);
             $em->flush();
 
             $this->addFlash('success', 'l\'activité a été modifiée avec succès');
@@ -274,7 +273,6 @@ final class SortieController extends AbstractController
             $sortie->setInfoSortie($annul);
             $sortie->setEtat("ANNULEE");
 
-            $em->persist($sortie);
             $em->flush();
             $this->redirectToRoute('sortie_list');
         }
