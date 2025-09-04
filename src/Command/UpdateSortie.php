@@ -41,6 +41,10 @@ class UpdateSortie extends Command
                 {
                     $sortie->setEtat('CLOTUREE');
                 }
+                else
+                {
+                    $sortie->setEtat('OUVERTE');
+                }
 
             }
 
