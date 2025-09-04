@@ -13,11 +13,24 @@ final class MainController extends AbstractController
     #[Route('/', name: 'main')]
     public function index(SortieRepository $sortieRepository): Response
     {
-        $sorties = $sortieRepository->findSortiesByPopular();
+
+        $allSorties = $sortieRepository->findUpcomingSorties();
+
+        $sortiesByDate = $allSorties; // copy the array
+        usort($sortiesByDate, fn($a, $b) => $a->getDateHeureDebut() <=> $b->getDateHeureDebut());
+        $sortiesByDate = array_slice($sortiesByDate, 0, 3);
+
+        $sortiesByPopular = $allSorties; // copy again
+        usort($sortiesByPopular, fn($a, $b) =>
+            ($a->getNbInscriptionMax() - count($a->getUsers()))
+            <=>
+            ($b->getNbInscriptionMax() - count($b->getUsers()))
+        );
+        $sortiesByPopular = array_slice($sortiesByPopular, 0, 3);
 
         return $this->render('main/index.html.twig', [
-            'moments' => $sortieRepository->findSortiesByDate(),
-            'populaires' => $sorties
+            'moments' => $sortiesByDate,
+            'populaires' => $sortiesByPopular
 
         ]);
     }

@@ -121,14 +121,21 @@ final class SortieController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
 
-        $sortie = $sortieRepository->findDetail($id);
-        $userCount = $sortieRepository->countUserForSortie($id);
+        $sortie = $sortieRepository->findDetailWithCount($id);
 
-        $placeRestante = $sortie->getNbInscriptionMax() -$userCount;
 
-        if (!$sortie->getOrganisateur()) {
-            $this->addFlash('error', 'Cette sortie n’a pas d’organisateur défini.');
+
+        if (!$sortie) {
+            $this->addFlash('error', 'Sortie Introuvable');
             return $this->redirectToRoute('sortie_list');
+        }
+
+
+
+        $nbUsers = count($sortie->getUsers());
+        $placeRestante = $sortie->getNbInscriptionMax() - $nbUsers;
+        if($sortie->getEtat() == 'CLOTUREE' && $placeRestante > 0 && $sortie->getDateLimiteInscription() < new \DateTime() && !$sortie->getEtat() == 'ANNULEE'){
+            $sortie->setEtat('OUVERTE');
         }
 
 
