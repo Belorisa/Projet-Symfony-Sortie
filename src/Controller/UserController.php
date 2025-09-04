@@ -137,6 +137,7 @@ final class UserController extends AbstractController
         ]);
     }
 
+/*
     #[Route('/admin/user_desactiver/{id}',
         name: 'admin_user_desactiver',
         requirements: ['id' => '\d+'],
@@ -166,6 +167,25 @@ final class UserController extends AbstractController
         }
 
         $user->setActif(true);
+        $em->flush();
+
+        //message de succès
+        $this->addFlash('success', '✅ Utilisateur activé avec succès.');
+        return $this->redirectToRoute('admin_user_list');
+    }
+*/
+    //gestion des comptes utilisateurs : activer/désactiver
+    #[Route('/admin/user_gestion/{id}',
+        name: 'admin_user_gestion',
+        requirements: ['id' => '\d+'],
+        methods: 'GET')]
+    public function gererUser(User $user, EntityManagerInterface $em): Response {
+        if (!$this->isGranted("ROLE_ADMIN")) {
+            $this->addFlash('error', 'Désolé, cette action n\'est pas autorisée')  ;
+            return $this->redirectToRoute('sortie_list');
+        }
+
+        $user->setActif(!$user->isActif());
         $em->flush();
 
         //message de succès

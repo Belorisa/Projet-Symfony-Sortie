@@ -40,7 +40,7 @@
                 <span>Date Fin Inscription : {{ populaire.dateLimiteInscription|date('d/m/Y') }}</span>
                 <span>Nombre de places maximum : {{ populaire.nbInscriptionMax }} </span>
                 <span>Nombre de places restantes : {{ populaire.nbInscriptionMax - populaire.users|length }} </span>
-                <span>Organisateur : {{ populaire.sortie.getOrganisateur().nom }} {{ populaire.sortie.getOrganisateur().prenom }}</span>
+                <span>Organisateur : {{ populaire.getOrganisateur().nom }} {{ populaire.getOrganisateur().prenom }}</span>
                 {% if populaire.etat == 'OUVERTE' %}
                 <span>OUVERTE - INSCRIPTION POSSIBLE ✅</span>
                 {% else %}
