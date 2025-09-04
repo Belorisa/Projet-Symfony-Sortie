@@ -105,8 +105,6 @@ class SortieRepository extends ServiceEntityRepository
     }
 
 
-
-
     public function findSortie(array $filters,int $nPerPage, int $offset): Paginator
     {
         $qB = $this->createQueryBuilder('s')

@@ -43,19 +43,30 @@
         <a href="{{ path('sortie_detail', {id : sortie.id }) }}">
             {% if sortie.etat != 'ANNULEE' %}
             <article class="card">
-            <h4>{{ sortie.nom }}</h4>
-            <span>Site : {{ sortie.site.nom }}</span>
-            <span>Date Début Sortie : {{ sortie.dateHeureDebut|date('d/m/Y') }}</span>
-            <span>Date Fin Inscription : {{ sortie.dateLimiteInscription|date('d/m/Y') }}</span>
-            <span>Nombre de places maximum : {{ sortie.nbInscriptionMax }} </span>
-            <span>Organisateur : {{ sortie.getOrganisateur().nom }} {{ sortie.getOrganisateur().prenom }}</span>
+                <h4>{{ sortie.nom }}</h4>
+                <span>Site : {{ sortie.site.nom }}</span>
+                <span>Date Début Sortie : {{ sortie.dateHeureDebut|date('d/m/Y') }}</span>
+                <span>Date Fin Inscription : {{ sortie.dateLimiteInscription|date('d/m/Y') }}</span>
+                <span>Nombre de places maximum : {{ sortie.nbInscriptionMax }} </span>
+                <span>Organisateur : {{ sortie.getOrganisateur().nom }} {{ sortie.getOrganisateur().prenom }}</span>
+                <!-- gestion affichage état -->
+                {% if sortie.etat == "OUVERTE" %}
+                <span class="etatlist">✅ Sortie {{ sortie.etat }}</span>
+                {%  endif %}
+                {% if sortie.etat == "CLOTUREE" %}
+                    <span class="etatlist">⛔ Sortie {{ sortie.etat }}</span>
+                {%  endif %}
+                {% if sortie.etat == "PASSEE" %}
+                    <span class="passee">📆 Sortie {{ sortie.etat }}</span>
+                {%  endif %}
+
             </article>
             {% endif %}
             {% if sortie.etat == "ANNULEE" %}
                 <article class="card" style="background-image: url('{{ asset('images/143294d0-c748-44a6-b2cd-205d54a8a469.jpg') }}')">
                     <h4>{{ sortie.nom }}</h4>
                     <span>Site : {{ sortie.site.nom }}</span>
-                    <span> {{ sortie.etat }} </span>
+                    <span class="etatlist">❌ {{ sortie.etat }} </span>
                     <span>Raison : {{ sortie.infoSortie }}</span>
                 </article>
             {% endif %}
