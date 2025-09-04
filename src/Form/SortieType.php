@@ -38,7 +38,9 @@ class SortieType extends AbstractType
                     new NotNull(['message' => 'Merci de remplir le champ date de fin']),
                 ],
             ])
-            ->add('dateLimiteInscription',DateTimeType::class,['widget' => 'single_text',
+            ->add('dateLimiteInscription',DateTimeType::class,[
+                'label' => 'Limite d\'inscription (en cas de modification elle sera effective dans l\'heure)',
+                'widget' => 'single_text',
                 'required' => false,
                 'constraints' => [
                     new NotNull(['message' => 'Merci de remplir le champ date limite']),
