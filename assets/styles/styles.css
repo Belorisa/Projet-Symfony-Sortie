@@ -166,6 +166,7 @@ form .btn:hover {
     margin-top: 1.5rem;
     text-shadow: 2px 2px #000;
 }
+
 /* Centrer le bouton */
 .btn-position {
     display: flex;
@@ -281,6 +282,9 @@ h1 {
     letter-spacing: 2px;
 }
 
+.annulee {
+    color: darkred;
+}
 
 /* Responsive pour mobile */
 @media (max-width: 768px) {
@@ -376,6 +380,19 @@ h1 {
     font-size: 0.95rem;
     color: #eee;
 }
+
+.card span.etatlist {
+    color: #ffd27f;
+    font-family: Arial, sans-serif;
+    text-shadow: 1px 1px #000;
+}
+
+.card span.passee {
+    color: darkgrey;
+    font-family: Arial, sans-serif;
+    text-shadow: 1px 1px #000;
+}
+
 
 
 /* Titres principaux */

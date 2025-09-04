@@ -117,20 +117,33 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/detail/{id}', name: '_detail')]
-    public function sortieDetail(int $id,SortieRepository $sortieRepository ): Response
+    public function sortieDetail(int $id,SortieRepository $sortieRepository, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
 
-        $sortie = $sortieRepository->findDetail($id);
-        $userCount = $sortieRepository->countUserForSortie($id);
+        $sortie = $sortieRepository->findDetailWithCount($id);
 
-        $placeRestante = $sortie->getNbInscriptionMax() -$userCount;
 
-        if (!$sortie->getOrganisateur()) {
-            $this->addFlash('error', 'Cette sortie n’a pas d’organisateur défini.');
+
+        if (!$sortie) {
+            $this->addFlash('error', 'Sortie Introuvable');
             return $this->redirectToRoute('sortie_list');
         }
 
+
+        $nbUsers = count($sortie->getUsers());
+        $placeRestante = $sortie->getNbInscriptionMax() - $nbUsers;
+        if($sortie->getEtat() == 'CLOTUREE' && $placeRestante > 0 && $sortie->getDateLimiteInscription() > new \DateTime()){
+            $sortie->setEtat('OUVERTE');
+            $em->persist($sortie);
+            $em->flush();
+        }
+
+        if($placeRestante == 0) {
+            $sortie->setEtat('CLOTUREE');
+            $em->persist($sortie);
+            $em->flush();
+        }
 
         return $this->render('sortie/detail.html.twig', [
             'sortie' => $sortie,
@@ -204,6 +217,16 @@ final class SortieController extends AbstractController
             );
 
             $sortie->removeUser($user);
+
+            //verification nb d'inscrits restants après désinscription
+            $nbInscrits = count($sortie->getUsers());
+            if ($nbInscrits < $sortie->getNbInscriptionMax() &&
+                $sortie->getEtat() == "CLOTUREE" &&
+                $sortie->getDateLimiteInscription()>new \DateTime())
+            {
+                $sortie->setEtat("OUVERTE"); //réouverture de la sortie
+            }
+
             $em->flush();
             $this->addFlash('success', 'Vous êtes bien désinscrit');
             return $this->redirectToRoute('sortie_detail', [

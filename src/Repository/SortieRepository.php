@@ -46,50 +46,63 @@ class SortieRepository extends ServiceEntityRepository
 
 
     //fonction pour récupérer les 3 sorties du moment page accueil
-    public function findSortiesByDate(): array {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.dateHeureDebut >= :now')
-            ->andWhere('s.etat = \'OUVERTE\'')
-            ->setParameter('now', new DateTime())
-            ->orderBy('s.dateHeureDebut', 'ASC')
-            ->setFirstResult(0)
-            ->setMaxResults(3)
-            ->getQuery()
-            ->getResult();
-    }
+//    public function findSortiesByDate(): array {
+//        return $this->createQueryBuilder('s')
+//            ->andWhere('s.dateHeureDebut >= :now')
+//            ->andWhere('s.etat = \'OUVERTE\'')
+//            ->setParameter('now', new DateTime())
+//            ->orderBy('s.dateHeureDebut', 'ASC')
+//            ->setFirstResult(0)
+//            ->setMaxResults(3)
+//            ->getQuery()
+//            ->getResult();
+//    }
+//
+//    //fonction pour récupérer les 3 sorties OUVERTES les plus populaires page accueil
+//    public function findSortiesByPopular(): array
+//    {
+//        $sortiesOuvertes = $this->createQueryBuilder('s')
+//            ->leftJoin('s.users', 'u')
+//            ->addSelect('s.nbInscriptionMax - count(u) AS HIDDEN placeRestante')
+//            ->andWhere('s.dateHeureDebut >= :now')
+//            ->andWhere('s.etat = :etat')
+//            ->groupBy('s.id')
+//            ->orderBy('placeRestante', 'ASC')
+//            ->setMaxResults(3)
+//            ->setParameter('now', new \DateTime())
+//            ->setParameter('etat', 'OUVERTE');
+//
+//        $results = $sortiesOuvertes->getQuery()->getResult();
+//
+//        $sortiesWithInfo = [];
+//        foreach ($results as $sortie) {
+//            $nbUsers = count($sortie->getUsers());
+//            $sortiesWithInfo[] = [
+//                'sortie' => $sortie,
+//                'nbUsers' => $nbUsers,
+//                'placesRestantes' => $sortie->getNbInscriptionMax() - $nbUsers,
+//            ];
+//        }
+//
+//        return $sortiesWithInfo;
+//
+//
+//    }
 
-    //fonction pour récupérer les 3 sorties OUVERTES les plus populaires page accueil
-    public function findSortiesByPopular(): array
+    public function findUpcomingSorties(): array
     {
-        $sortiesOuvertes = $this->createQueryBuilder('s')
+        return $this->createQueryBuilder('s')
             ->leftJoin('s.users', 'u')
-            ->addSelect('count(u) AS HIDDEN nbUsers')
+            ->addSelect('u')
             ->andWhere('s.dateHeureDebut >= :now')
             ->andWhere('s.etat = :etat')
             ->groupBy('s.id')
-            ->orderBy('nbUsers', 'ASC')
-            ->setMaxResults(3)
             ->setParameter('now', new \DateTime())
-            ->setParameter('etat', 'OUVERTE');
-
-        $results = $sortiesOuvertes->getQuery()->getResult();
-
-        $sortiesWithInfo = [];
-        foreach ($results as $sortie) {
-            $nbUsers = count($sortie->getUsers());
-            $sortiesWithInfo[] = [
-                'sortie' => $sortie,
-                'nbUsers' => $nbUsers,
-                'placesRestantes' => $sortie->getNbInscriptionMax() - $nbUsers,
-            ];
-        }
-
-        return $sortiesWithInfo;
-
+            ->setParameter('etat', 'OUVERTE')
+            ->getQuery()
+            ->getResult();
 
     }
-
-
 
 
     public function findSortie(array $filters,int $nPerPage, int $offset): Paginator
@@ -156,6 +169,18 @@ class SortieRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
             ->leftJoin('s.users', 'u')->addSelect('u')
             ->leftJoin('s.organisateur', 'o')->addSelect('o')
+            ->where('s.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+
+    public function findDetailWithCount(int $id): ?Sortie
+    {
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.users', 'u')->addSelect('u')               // eager-load users
+            ->leftJoin('s.organisateur', 'o')->addSelect('o')       // eager-load organizer
             ->where('s.id = :id')
             ->setParameter('id', $id)
             ->getQuery()
