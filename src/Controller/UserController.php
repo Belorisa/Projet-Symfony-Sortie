@@ -10,14 +10,17 @@ use App\Helper\FileUploader;
 use App\Helper\UserCSV;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use MongoDB\Driver\Session;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class UserController extends AbstractController
 {
@@ -119,14 +122,12 @@ final class UserController extends AbstractController
 
     //gestion des utilisateurs par l'administrateur
 
-    //rôle admin défini dans security.yaml
+
     #[Route('/admin/user_list', name: 'admin_user_list')]
     public function listUsers(Request $request, EntityManagerInterface $em): Response {
-
         if (!$this->isGranted('ROLE_ADMIN' )) {
             $this->addFlash('error', 'Désolé cette action n\'est pas autorisée')  ;
             return $this->redirectToRoute('sortie_list');
-
         }
 
         $users = $em->getRepository(User::class)->findAll();
@@ -136,17 +137,14 @@ final class UserController extends AbstractController
         ]);
     }
 
-    //rôle admin défini dans security.yaml
     #[Route('/admin/user_desactiver/{id}',
         name: 'admin_user_desactiver',
         requirements: ['id' => '\d+'],
         methods: 'GET')]
     public function desactiverUser(User $user, EntityManagerInterface $em): Response {
-
         if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('error', 'Désolé cette action n\'est pas autorisée')  ;
             return $this->redirectToRoute('sortie_list');
-
         }
 
         $user->setActif(false);
@@ -157,7 +155,6 @@ final class UserController extends AbstractController
         return $this->redirectToRoute('admin_user_list');
     }
 
-    //rôle admin défini dans security.yaml
     #[Route('/admin/user_activer/{id}',
         name: 'admin_user_activer',
         requirements: ['id' => '\d+'],
@@ -166,7 +163,6 @@ final class UserController extends AbstractController
         if (!$this->isGranted("ROLE_ADMIN")) {
             $this->addFlash('error', 'Désolé, cette action n\'est pas autorisée')  ;
             return $this->redirectToRoute('sortie_list');
-
         }
 
         $user->setActif(true);
@@ -177,18 +173,15 @@ final class UserController extends AbstractController
         return $this->redirectToRoute('admin_user_list');
     }
 
-    //rôle admin défini dans security.yaml
+
     #[Route('/admin/user_delete/{id}',
         name: 'admin_user_delete',
         requirements: ['id' => '\d+'],
         methods: 'GET' )]
     public function deleteUser(User $user, EntityManagerInterface $em, Request $request): Response {
-
-
         if (!$this->isGranted( 'ROLE_ADMIN')) {
             $this->addFlash('error', 'Désolé, cette action n\'est pas autorisée')  ;
             return $this->redirectToRoute('sortie_list');
-
         }
 
         if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->get('token')))
@@ -200,16 +193,13 @@ final class UserController extends AbstractController
             $this->addFlash('success', '✅ Utilisateur supprimé avec succès.');
         } else {
             $this->addFlash('danger', '⛔ ⚠ Suppression impossible');
-
         }
-
             return $this->redirectToRoute('admin_user_list');
     }
 
     #[Route('/admin/userlist', name: 'admin_user_userlist')]
-    public function addUsersList(Request $request,UserCSV $CSV) : Response
+    public function addUsersList(Request $request,UserCSV $CSV, SessionInterface $session) : Response
     {
-
         if (!$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('error', 'Désolé cette action n\'est pas autorisée')  ;
             return $this->redirectToRoute('sortie_list');
@@ -217,11 +207,11 @@ final class UserController extends AbstractController
 
         $listusers= $request->files->get("listusers");
 
-        $CSV->InsertUsers($listusers);
+        $CSV->InsertUsers($listusers, $session);
 
         return $this->redirectToRoute('admin_user_list');
 
     }
 
-    }
+}
 

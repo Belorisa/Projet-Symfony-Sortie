@@ -9,14 +9,21 @@
     <h2>Evènements du moment</h2>
     <section class="sortie-list">
         <!-- boucle for sur la liste des sorties et tri par nb de participants -->
-        {% for sortie in moments %}
+        {% for moment in moments %}
             <article class="card">
-                <h4>{{ sortie.nom }}</h4>
-                <span>Site : {{ sortie.site.nom }}</span>
-                <span>Date Début Sortie : {{ sortie.dateHeureDebut|date('d/m/Y') }}</span>
-                <span>Date Fin Inscription : {{ sortie.dateLimiteInscription|date('d/m/Y') }}</span>
-                <span>Nombre de places maximum : {{ sortie.nbInscriptionMax }} </span>
-                <span>Organisateur : {{ sortie.getOrganisateur().nom }} {{ sortie.getOrganisateur().prenom }}</span>
+                <h4>{{ moment.nom }}</h4>
+                <span>Site : {{ moment.site.nom }}</span>
+                <span>Date Début Sortie : {{ moment.dateHeureDebut|date('d/m/Y') }}</span>
+                <span>Date Fin Inscription : {{ moment.dateLimiteInscription|date('d/m/Y') }}</span>
+                <span>Nombre de places maximum : {{ moment.nbInscriptionMax }} </span>
+                <span>Organisateur : {{ moment.getOrganisateur().nom }} {{ moment.getOrganisateur().prenom }}</span>
+
+                {% if moment.etat == 'OUVERTE' %}
+                    <span class="">OUVERTE - INSCRIPTION POSSIBLE ✅</span>
+                {% else %}
+                    <span class="">INSCRIPTION IMPOSSIBLE ⛔</span>
+                {%  endif %}
+
             </article>
         {%  endfor %}
     </section>
@@ -33,13 +40,14 @@
                 <span>Date Fin Inscription : {{ populaire.dateLimiteInscription|date('d/m/Y') }}</span>
                 <span>Nombre de places maximum : {{ populaire.nbInscriptionMax }} </span>
                 <span>Nombre de places restantes : {{ populaire.nbInscriptionMax - populaire.users|length }} </span>
+                <span>Organisateur : {{ populaire.sortie.getOrganisateur().nom }} {{ populaire.sortie.getOrganisateur().prenom }}</span>
                 {% if populaire.etat == 'OUVERTE' %}
                 <span>OUVERTE - INSCRIPTION POSSIBLE ✅</span>
                 {% else %}
-                    <span>INSCRIPTION IMPOSSIBLE ⛔</span>
+                    <span class="">INSCRIPTION IMPOSSIBLE ⛔</span>
                 {%  endif %}
 
-                <span>Organisateur : {{ populaire.getOrganisateur().nom }} {{ populaire.getOrganisateur().prenom }}</span>
+
             </article>
         {% endfor %}
     </section>
