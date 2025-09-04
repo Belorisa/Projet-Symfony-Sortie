@@ -36,7 +36,8 @@ final class LieuController extends AbstractController
 
             $this->addFlash('success', 'Un nouveau lieu a été créé');
 
-            return $this->redirectToRoute('sortie_creation', [
+            return $this->redirectToRoute('sortie_list', [
+                'id' => $lieu->getId(),
                 'nom' => $lieu->getNom(),
             ]);
         }
