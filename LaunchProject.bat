@@ -2,7 +2,7 @@
 REM =========================================
 REM CONFIGURATION
 REM =========================================
-set PROJECT_PATH=D:\ProjetSymfony7.3\projetSymfonySortie
+set PROJECT_PATH=D:\Projet_PHP\Projet-Symfony-Sortie
 set PHP_PATH=C:\wamp64\bin\php\php8.3.14\php.exe
 set SYMFONY_PATH=C:\wamp64\bin\php\php8.3.14\symfony.exe
 set CONSOLE=%PROJECT_PATH%\bin\console
