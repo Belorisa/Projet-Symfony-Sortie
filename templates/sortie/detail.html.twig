@@ -30,13 +30,13 @@
             <div class="field"><label>Date de Fin:</label> <span>{{ sortie.DateHeureFin|date('d/m/Y H:i') }}</span></div>
             <div class="field"><label>Description et infos:</label> <span>{{ sortie.infoSortie }}</span></div>
 
-            <div class="field"><label>Longitude:</label> <span>{{ sortie.lieu.longitude }}</span></div>
             <div class="field"><label>Latitude:</label> <span>{{ sortie.lieu.latitude }}</span></div>
+            <div class="field"><label>Longitude:</label> <span>{{ sortie.lieu.longitude }}</span></div>
         </div>
     {% endif %}
 
     {% if sortie.etat == "ANNULEE" %}
-        <h1>SORTIE ANNULEE</h1>
+        <h1 class="annulee">❌ SORTIE ANNULEE</h1>
         <div class="container">
             <div class="field"><label>Raison :</label> <span>{{ sortie.infoSortie }}</span></div>
         </div>
@@ -49,19 +49,19 @@
             </button>
         {% endif %}
 
-        {% if app.user in sortie.users and sortie.etat == "OUVERTE" %}
+        {% if app.user in sortie.users and (sortie.etat == "OUVERTE" or (sortie.dateLimiteInscription > "now" and sortie.etat == "CLOTUREE"))%}
             <button type="button" class="btn btn-option">
                 <a href="{{ path('sortie_deinscription',{id: sortie.id}) }}">Se désinscrire</a>
             </button>
         {% endif %}
 
-        {% if app.user.id == sortie.organisateur.id or is_granted('ROLE_ADMIN') and sortie.etat == "OUVERTE" %}
+        {% if app.user.id == sortie.organisateur.id or is_granted('ROLE_ADMIN') and (sortie.etat == "OUVERTE" or sortie.etat == "CLOTUREE")%}
             <button type="button" class="btn btn-option">
                 <a href="{{ path('sortie_update',{id: sortie.id}) }}">Modifier</a>
             </button>
             {% if sortie.etat != "ANNULEE" %}
                 <button type="button" class="btn btn-option">
-                    <a href="{{ path('sortie_annulation',{id: sortie.id}) }}">ANNULER</a>
+                    <a href="{{ path('sortie_annulation',{id: sortie.id}) }}" onclick="return confirm('⚠ La sortie sera supprimée définitivement, continuer?')">ANNULER</a>
                 </button>
             {% endif %}
         {% endif %}
