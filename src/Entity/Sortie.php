@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
 #[Assert\Expression(
@@ -219,5 +220,18 @@ class Sortie
         $this->lieu = $lieu;
 
         return $this;
+    }
+
+    #[Assert\Callback]
+    public function validateNbInscriptionMax(ExecutionContextInterface $context, $payload): void
+    {
+        $currentSubscribers = $this->getUsers()->count();
+
+        if ($this->nbInscriptionMax < $currentSubscribers) {
+            $context->buildViolation('Le nombre maximum d’inscriptions ne peut pas être inférieur au nombre d’inscrits actuels ({{ count }}).')
+                ->setParameter('{{ count }}', $currentSubscribers)
+                ->atPath('nbInscriptionMax')
+                ->addViolation();
+        }
     }
 }
