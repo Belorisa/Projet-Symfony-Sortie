@@ -28,6 +28,7 @@ security:
             remember_me:
                 secret: '%kernel.secret%'
                 lifetime: 604800
+            user_checker: App\Security\UserChecker
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall

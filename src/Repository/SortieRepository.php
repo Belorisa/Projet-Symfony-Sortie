@@ -96,7 +96,6 @@ class SortieRepository extends ServiceEntityRepository
             ->addSelect('u')
             ->andWhere('s.dateHeureDebut >= :now')
             ->andWhere('s.etat = :etat')
-            ->groupBy('s.id')
             ->setParameter('now', new \DateTime())
             ->setParameter('etat', 'OUVERTE')
             ->getQuery()
