@@ -122,7 +122,6 @@ final class UserController extends AbstractController
 
     //gestion des utilisateurs par l'administrateur
 
-
     #[Route('/admin/user_list', name: 'admin_user_list')]
     public function listUsers(Request $request, EntityManagerInterface $em): Response {
         if (!$this->isGranted('ROLE_ADMIN' )) {
@@ -189,7 +188,7 @@ final class UserController extends AbstractController
         $em->flush();
 
         //message de succès
-        $this->addFlash('success', '✅ Utilisateur activé avec succès.');
+        $this->addFlash('success', '✅ Compte utilisateur modifié avec succès.');
         return $this->redirectToRoute('admin_user_list');
     }
 
