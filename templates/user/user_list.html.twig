@@ -33,13 +33,6 @@
                         <td>{{ user.actif ? '🔓 actif' : '🔒 inactif' }} </td>
 
                         {% if 'ROLE_ADMIN' not in user.roles %}
-                            {#  <td>
-                                {% if user.actif %}
-                                <a href="{{ path('admin_user_desactiver', {id: user.id}) }}" > 🔒 Désactiver</a>
-                                {% else %}
-                                    <a href="{{ path('admin_user_activer', {id: user.id}) }}" > 🔓 Activer</a>
-                                {% endif %}
-                            </td> #}
                             <td>
                                 <a href="{{ path('admin_user_gestion', {id: user.id}) }}">
                                     {{ user.actif ? '🔒 Désactiver' : '🔓 Activer' }}
